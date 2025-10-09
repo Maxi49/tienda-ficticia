@@ -1,25 +1,69 @@
 #include <iostream>
+#include <string>
+using namespace std;
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+//creacion de las clases principales
+class Producto {
+public:
+    int id, idCliente;
+    string titulo, genero;
+    float precio;
+    bool alquilado;
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+    Producto(int id, int idCLiente, string titulo, string genero, float precio, bool alquilado):
+        id(id),
+        idCliente(idCLiente),
+        titulo(titulo),
+        genero(genero),
+        precio(precio),
+        alquilado(alquilado){
     }
 
+};
+
+class Videojuego : public Producto{
+public:
+    string plataforma;
+    int cantJugadores;
+
+    Videojuego(int id, int idCLiente, string titulo, string genero, string plataforma, int cantJugadores, float precio, bool alquilado)
+            :Producto(id,idCliente, titulo, genero, precio, alquilado), plataforma(plataforma), cantJugadores(cantJugadores) {
+    }
+    void mostrarVideoJuego(){
+    cout << "id" << "idCliente" << "Titulo" << "Genero" << "Plataforma" << "Cantidad Jugadores" << "Precio" << "Alquilado" << endl;
+    cout << "|" << id << "|" << idCliente << "|" << titulo << "|" << genero << "|" << plataforma << "|" << cantJugadores << "|" << precio << "|" << alquilado << "|" << endl;
+
+    }
+};
+
+
+class Pelicula : public Producto{
+public:
+    string director;
+    float duracion;
+
+    Pelicula(int id, int idCLiente, string titulo, string genero, string direcotr, int duracion, float precio, bool alquilado)
+            :Producto(id,idCliente, titulo, genero, precio, alquilado), director(director), duracion(duracion) {
+    }
+    void mostrarPelicula(){
+        cout << "id" << "idCliente" << "Titulo" << "Genero" << "Director" << "duracion" << "Precio" << "Alquilado" << endl;
+        cout << "|" << id << "|" << idCliente << "|" << titulo << "|" << genero << "|" << director << "|" << duracion << "|" << precio << "|" << alquilado << "|" << endl;
+
+    }
+};
+int main() {
+    Producto p1(0,"God of War", "Accion", 10.00, false,NULL);
+    Producto p2(1, "Terminator", "Accion", 5.50, true, 1);
+    Videojuego v1(0, "God of War", "Accion", 10.00, false, "xbox", "1");
+    Pelicula c1(1, "Terminator", "Accion", 5.50, true, "Esteban", 160);
+    cout << "-----------INFO PRODUCTOS------------ \n";
+
+    cout << "\n\n";
+    cout << "------------INFO JUEGOS------------\n";
+    v1.mostrarVideoJuego();
+
+    cout << "\n\n";
+    cout << "------------INFO PELICULAS------------\n";
+    c1.mostrarPelicula();
     return 0;
 }
-
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.
