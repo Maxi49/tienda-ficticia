@@ -1,3 +1,3 @@
-C:/Users/gimen/CLionProjects/tienda-ficticia/cmake-build-debug/CMakeFiles/tienda_ficticia.dir
-C:/Users/gimen/CLionProjects/tienda-ficticia/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/gimen/CLionProjects/tienda-ficticia/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Li/Desktop/tienda-ficticia/cmake-build-debug/CMakeFiles/tienda_ficticia.dir
+C:/Users/Li/Desktop/tienda-ficticia/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Li/Desktop/tienda-ficticia/cmake-build-debug/CMakeFiles/rebuild_cache.dir
