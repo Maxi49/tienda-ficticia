@@ -1,8 +1,18 @@
 #include <iostream>
-using namespace std;
+#include "headers/products/products.h"
+#include "single_include/nlohmann/json.hpp"
 
-#include "headers/products.h"
+using json = nlohmann::json;
 int main() {
-    cout << "Hola Maxi desde C++!" << endl;
+    std::cout << "Hola Maxi desde C++!" << std::endl;
+
+    json persona = {
+        {"name", "Maxi"},
+        {"age", 22},
+        {"city", "Buenos Aires"}
+    };
+
+    std::cout << persona.dump(4) << std::endl;
+
     return 0;
 }
