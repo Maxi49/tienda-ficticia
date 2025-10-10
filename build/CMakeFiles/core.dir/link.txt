@@ -1,2 +1,2 @@
-C:/msys64/ucrt64/bin/ar.exe qc lib/libcore.a CMakeFiles/core.dir/source/product.cpp.obj CMakeFiles/core.dir/source/store.cpp.obj
+C:/msys64/ucrt64/bin/ar.exe qc lib/libcore.a CMakeFiles/core.dir/source/client.cpp.obj CMakeFiles/core.dir/source/products/game.cpp.obj CMakeFiles/core.dir/source/products/movie.cpp.obj CMakeFiles/core.dir/source/products/product.cpp.obj CMakeFiles/core.dir/source/store.cpp.obj
 C:/msys64/ucrt64/bin/ranlib.exe lib/libcore.a

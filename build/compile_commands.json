@@ -1,9 +1,27 @@
 [
 {
   "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
-  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/product.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp",
-  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp",
-  "output": "CMakeFiles/core.dir/source/product.cpp.obj"
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/client.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/client.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/client.cpp",
+  "output": "CMakeFiles/core.dir/source/client.cpp.obj"
+},
+{
+  "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/products/game.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/products/game.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/products/game.cpp",
+  "output": "CMakeFiles/core.dir/source/products/game.cpp.obj"
+},
+{
+  "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/products/movie.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp",
+  "output": "CMakeFiles/core.dir/source/products/movie.cpp.obj"
+},
+{
+  "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/products/product.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp",
+  "output": "CMakeFiles/core.dir/source/products/product.cpp.obj"
 },
 {
   "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",

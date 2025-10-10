@@ -8,7 +8,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp" "CMakeFiles/core.dir/source/product.cpp.obj" "gcc" "CMakeFiles/core.dir/source/product.cpp.obj.d"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/client.cpp" "CMakeFiles/core.dir/source/client.cpp.obj" "gcc" "CMakeFiles/core.dir/source/client.cpp.obj.d"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/products/game.cpp" "CMakeFiles/core.dir/source/products/game.cpp.obj" "gcc" "CMakeFiles/core.dir/source/products/game.cpp.obj.d"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp" "CMakeFiles/core.dir/source/products/movie.cpp.obj" "gcc" "CMakeFiles/core.dir/source/products/movie.cpp.obj.d"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp" "CMakeFiles/core.dir/source/products/product.cpp.obj" "gcc" "CMakeFiles/core.dir/source/products/product.cpp.obj.d"
   "C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp" "CMakeFiles/core.dir/source/store.cpp.obj" "gcc" "CMakeFiles/core.dir/source/store.cpp.obj.d"
   )
 

@@ -5,7 +5,10 @@
 			"expression" : "C:/Users/gimen/Desktop/tienda-ficticia/source/*.cpp",
 			"paths" : 
 			[
-				"C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp",
+				"C:/Users/gimen/Desktop/tienda-ficticia/source/client.cpp",
+				"C:/Users/gimen/Desktop/tienda-ficticia/source/products/game.cpp",
+				"C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp",
+				"C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp",
 				"C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp"
 			],
 			"recurse" : true

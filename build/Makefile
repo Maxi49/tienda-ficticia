@@ -167,29 +167,101 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-source/product.obj: source/product.cpp.obj
-.PHONY : source/product.obj
+source/client.obj: source/client.cpp.obj
+.PHONY : source/client.obj
 
 # target to build an object file
-source/product.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/product.cpp.obj
-.PHONY : source/product.cpp.obj
+source/client.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/client.cpp.obj
+.PHONY : source/client.cpp.obj
 
-source/product.i: source/product.cpp.i
-.PHONY : source/product.i
+source/client.i: source/client.cpp.i
+.PHONY : source/client.i
 
 # target to preprocess a source file
-source/product.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/product.cpp.i
-.PHONY : source/product.cpp.i
+source/client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/client.cpp.i
+.PHONY : source/client.cpp.i
 
-source/product.s: source/product.cpp.s
-.PHONY : source/product.s
+source/client.s: source/client.cpp.s
+.PHONY : source/client.s
 
 # target to generate assembly for a file
-source/product.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/product.cpp.s
-.PHONY : source/product.cpp.s
+source/client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/client.cpp.s
+.PHONY : source/client.cpp.s
+
+source/products/game.obj: source/products/game.cpp.obj
+.PHONY : source/products/game.obj
+
+# target to build an object file
+source/products/game.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/game.cpp.obj
+.PHONY : source/products/game.cpp.obj
+
+source/products/game.i: source/products/game.cpp.i
+.PHONY : source/products/game.i
+
+# target to preprocess a source file
+source/products/game.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/game.cpp.i
+.PHONY : source/products/game.cpp.i
+
+source/products/game.s: source/products/game.cpp.s
+.PHONY : source/products/game.s
+
+# target to generate assembly for a file
+source/products/game.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/game.cpp.s
+.PHONY : source/products/game.cpp.s
+
+source/products/movie.obj: source/products/movie.cpp.obj
+.PHONY : source/products/movie.obj
+
+# target to build an object file
+source/products/movie.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/movie.cpp.obj
+.PHONY : source/products/movie.cpp.obj
+
+source/products/movie.i: source/products/movie.cpp.i
+.PHONY : source/products/movie.i
+
+# target to preprocess a source file
+source/products/movie.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/movie.cpp.i
+.PHONY : source/products/movie.cpp.i
+
+source/products/movie.s: source/products/movie.cpp.s
+.PHONY : source/products/movie.s
+
+# target to generate assembly for a file
+source/products/movie.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/movie.cpp.s
+.PHONY : source/products/movie.cpp.s
+
+source/products/product.obj: source/products/product.cpp.obj
+.PHONY : source/products/product.obj
+
+# target to build an object file
+source/products/product.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/product.cpp.obj
+.PHONY : source/products/product.cpp.obj
+
+source/products/product.i: source/products/product.cpp.i
+.PHONY : source/products/product.i
+
+# target to preprocess a source file
+source/products/product.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/product.cpp.i
+.PHONY : source/products/product.cpp.i
+
+source/products/product.s: source/products/product.cpp.s
+.PHONY : source/products/product.s
+
+# target to generate assembly for a file
+source/products/product.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/products/product.cpp.s
+.PHONY : source/products/product.cpp.s
 
 source/store.obj: source/store.cpp.obj
 .PHONY : source/store.obj
@@ -228,9 +300,18 @@ help:
 	@echo "... main.obj"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... source/product.obj"
-	@echo "... source/product.i"
-	@echo "... source/product.s"
+	@echo "... source/client.obj"
+	@echo "... source/client.i"
+	@echo "... source/client.s"
+	@echo "... source/products/game.obj"
+	@echo "... source/products/game.i"
+	@echo "... source/products/game.s"
+	@echo "... source/products/movie.obj"
+	@echo "... source/products/movie.i"
+	@echo "... source/products/movie.s"
+	@echo "... source/products/product.obj"
+	@echo "... source/products/product.i"
+	@echo "... source/products/product.s"
 	@echo "... source/store.obj"
 	@echo "... source/store.i"
 	@echo "... source/store.s"

@@ -4,7 +4,10 @@
 # CORE_SOURCES at CMakeLists.txt:17 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "C:/Users/gimen/Desktop/tienda-ficticia/source/*.cpp")
 set(OLD_GLOB
-  "C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/client.cpp"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/products/game.cpp"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp"
   "C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
