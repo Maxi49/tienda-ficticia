@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/product.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/product.cpp",
+  "output": "CMakeFiles/core.dir/source/product.cpp.obj"
+},
+{
+  "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/core.dir/includes_CXX.rsp -g -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/core.dir/source/store.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp",
+  "output": "CMakeFiles/core.dir/source/store.cpp.obj"
+},
+{
+  "directory": "C:/Users/gimen/Desktop/tienda-ficticia/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/app.dir/includes_CXX.rsp -g -std=c++20 -o CMakeFiles/app.dir/main.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/main.cpp",
+  "file": "C:/Users/gimen/Desktop/tienda-ficticia/main.cpp",
+  "output": "CMakeFiles/app.dir/main.cpp.obj"
+}
+]

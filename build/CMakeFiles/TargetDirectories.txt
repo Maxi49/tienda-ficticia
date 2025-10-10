@@ -1,3 +1,4 @@
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/RUN_TESTS.dir
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/core.dir
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/app.dir
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/edit_cache.dir
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/rebuild_cache.dir

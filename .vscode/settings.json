@@ -1,0 +1,7 @@
+{
+  "C_Cpp.default.cppStandard": "c++20",
+  "cmake.useCMakePresets": "auto",
+  "cmake.configureOnOpen": true,
+  "cmake.buildBeforeRun": true,
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+}
