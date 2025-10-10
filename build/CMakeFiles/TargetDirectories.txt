@@ -1,0 +1,3 @@
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/ZERO_CHECK.dir
