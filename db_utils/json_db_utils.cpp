@@ -9,6 +9,70 @@
 #include "db_enum_aliases.h"
 #include "single_include/nlohmann/json.hpp"
 
+/*
+  DOCS: 
+
+  importar db_enum_aliases.h (ver archivo)
+
+  dentro de las clases agregar:
+
+  JSON_DB nombre_de_clase_db{Alias::Products};
+
+  luego se puede usar Clase::db_.insert(obj), Clase::db_.find_by_id(id), etc.
+
+  ejemplos:
+
+  JSON_DB products_db{Alias::Products};
+
+  insert: 
+
+  json new_product = {
+      {"id", "123"},
+      {"name", "Producto de prueba"},
+      {"price", 19.99}
+  };
+
+  if (products_db.insert(new_product)) {
+      std::cout << "Producto insertado exitosamente." << std::endl;
+  } else {
+      std::cout << "Fallo al insertar el producto (posiblemente id duplicado)." << std::endl;
+  }
+
+  buscar por id:
+
+  auto producto = products_db.find_by_id("id_producto");
+
+  if (!producto) {
+      std::cerr << "Producto no encontrado." << std::endl;
+  }
+  
+  std::cout << "Producto encontrado: " << producto->dump() << std::endl;    
+
+
+  actualizar por id:
+
+  json updated_product = {
+      {"id", "123"},
+      {"name", "Producto actualizado"},
+      {"price", 24.99}
+  };
+
+  if (products_db.update_by_id(updated_product)) {
+      std::cout << "Producto actualizado exitosamente." << std::endl;
+  } else {
+      std::cout << "Fallo al actualizar el producto (posiblemente no existe)." << std::endl;
+  }
+
+  y para eliminar:
+
+  if (products_db.delete_by_id("123")) {
+      std::cout << "Producto eliminado exitosamente." << std::endl;
+  } else {
+      std::cout << "Fallo al eliminar el producto (posiblemente no existe)." << std::endl;
+  }
+
+*/
+
 using json = nlohmann::json;
 
 JSON_DB::JSON_DB(Alias path_alias)
@@ -101,9 +165,11 @@ std::optional<std::size_t> JSON_DB::index_of_id_(const std::string& id) const {
   return std::nullopt;
 }
 
+const json& JSON_DB::all() const { return data_; }
+
 std::optional<json> JSON_DB::find_by_id(const std::string& id) const {
   if (auto idx = index_of_id_(id)) {
-    return std::optional<json>data_[*idx];
+    return std::optional<json>(data_[*idx]);
   }
 
   return std::nullopt;
@@ -146,4 +212,16 @@ bool JSON_DB::delete_by_id(const std::string& id) {
     return save_();
   }
   return false;
+}
+
+std::vector<json> JSON_DB::search_by_class_field(const std::string& field, const json& value) const {
+  std::vector<json> matches;
+  for (const auto& item : data_) {
+    if (!item.is_object()) continue;
+    const auto it = item.find(field);
+    if (it != item.end() && *it == value) {
+      matches.push_back(item);
+    }
+  }
+  return matches;
 }

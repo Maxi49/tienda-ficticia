@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <vector>
 #include "single_include/nlohmann/json.hpp"
 #include "db_enum_aliases.h"
 
@@ -44,6 +45,9 @@ public:
 
   bool delete_by_id(const std::string& id);
 
+  const json& all() const;
+
+  std::vector<json> search_by_class_field(const std::string& field, const json& value) const;
 };
 
 #endif // DB_UTILS_H

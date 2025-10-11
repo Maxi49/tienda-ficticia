@@ -1,24 +1,14 @@
 #ifndef PRODUCT_H
 #define PRODUCT_H
 
-#include <string>
-#include <chrono>
 #include <optional>
-#include <cstddef>
+#include <string>
+#include <utility>
 
-class product {
-public:
-    using days     = std::chrono::days;
-    using sys_days = std::chrono::sys_days;
+#include "single_include/nlohmann/json.hpp"
+#include "../../db_utils/db_enum_aliases.h"
+#include "../../db_utils/json_db_utils.h"
 
-private:
-    std::string title{};
-    std::string genre{};
-    std::size_t quantity_available{};
-    double rent_price{};
-    std::optional<sys_days> start_rent_date{};
-    std::optional<sys_days> end_rent_date{};
-    std::optional<days>     rent_period{};
-};
+class Product {};
 
 #endif // PRODUCT_H
