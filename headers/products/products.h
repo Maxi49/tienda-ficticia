@@ -31,7 +31,7 @@ public:
 
     // Métodos virtuales para que las clases hijas los redefinan
     virtual std::string type() const = 0;
-    virtual void showInfo() const;
+    virtual void showInfo() const = 0;
 
     // Métodos internos de stock
     bool canRent(int qty) const;

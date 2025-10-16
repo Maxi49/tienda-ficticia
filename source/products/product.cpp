@@ -57,15 +57,3 @@ bool Product::applyReturn(const std::string& client_id, int amountReq) {
     rented = (availableStock < totalStock);
     return true;
 };
-// Salida de información
-void Product::showInfo() const {
-    
-    std::cout << "ID: " << id
-              << " | Nombre: " << name
-              << " | Género: " << genero
-              << " | Precio: $" << price
-              << " | Stock total: " << totalStock
-              << " | Disponible: " << availableStock
-              << (rented ? " | Estado: ALQUILADO" : " | Estado: DISPONIBLE")
-              << std::endl;
-};

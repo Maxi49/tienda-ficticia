@@ -3,5 +3,10 @@
   "cmake.useCMakePresets": "auto",
   "cmake.configureOnOpen": true,
   "cmake.buildBeforeRun": true,
-  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+  "files.associations": {
+    "exception": "cpp",
+    "optional": "cpp",
+    "xstring": "cpp"
+  }
 }
