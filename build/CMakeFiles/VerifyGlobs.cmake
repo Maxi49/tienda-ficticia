@@ -9,6 +9,7 @@ set(OLD_GLOB
   "C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp"
   "C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp"
   "C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

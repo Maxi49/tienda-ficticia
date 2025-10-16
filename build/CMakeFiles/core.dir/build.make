@@ -147,13 +147,29 @@ CMakeFiles/core.dir/source/store.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/core.dir/source/store.cpp.s"
 	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp -o CMakeFiles/core.dir/source/store.cpp.s
 
+CMakeFiles/core.dir/source/transaction.cpp.obj: CMakeFiles/core.dir/flags.make
+CMakeFiles/core.dir/source/transaction.cpp.obj: CMakeFiles/core.dir/includes_CXX.rsp
+CMakeFiles/core.dir/source/transaction.cpp.obj: C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp
+CMakeFiles/core.dir/source/transaction.cpp.obj: CMakeFiles/core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/core.dir/source/transaction.cpp.obj"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/core.dir/source/transaction.cpp.obj -MF CMakeFiles/core.dir/source/transaction.cpp.obj.d -o CMakeFiles/core.dir/source/transaction.cpp.obj -c C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp
+
+CMakeFiles/core.dir/source/transaction.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/core.dir/source/transaction.cpp.i"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp > CMakeFiles/core.dir/source/transaction.cpp.i
+
+CMakeFiles/core.dir/source/transaction.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/core.dir/source/transaction.cpp.s"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp -o CMakeFiles/core.dir/source/transaction.cpp.s
+
 # Object files for target core
 core_OBJECTS = \
 "CMakeFiles/core.dir/source/client.cpp.obj" \
 "CMakeFiles/core.dir/source/products/game.cpp.obj" \
 "CMakeFiles/core.dir/source/products/movie.cpp.obj" \
 "CMakeFiles/core.dir/source/products/product.cpp.obj" \
-"CMakeFiles/core.dir/source/store.cpp.obj"
+"CMakeFiles/core.dir/source/store.cpp.obj" \
+"CMakeFiles/core.dir/source/transaction.cpp.obj"
 
 # External object files for target core
 core_EXTERNAL_OBJECTS =
@@ -163,9 +179,10 @@ lib/libcore.a: CMakeFiles/core.dir/source/products/game.cpp.obj
 lib/libcore.a: CMakeFiles/core.dir/source/products/movie.cpp.obj
 lib/libcore.a: CMakeFiles/core.dir/source/products/product.cpp.obj
 lib/libcore.a: CMakeFiles/core.dir/source/store.cpp.obj
+lib/libcore.a: CMakeFiles/core.dir/source/transaction.cpp.obj
 lib/libcore.a: CMakeFiles/core.dir/build.make
 lib/libcore.a: CMakeFiles/core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library lib/libcore.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library lib/libcore.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/core.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/core.dir/link.txt --verbose=$(VERBOSE)
 

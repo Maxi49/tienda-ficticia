@@ -13,6 +13,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp" "CMakeFiles/core.dir/source/products/movie.cpp.obj" "gcc" "CMakeFiles/core.dir/source/products/movie.cpp.obj.d"
   "C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp" "CMakeFiles/core.dir/source/products/product.cpp.obj" "gcc" "CMakeFiles/core.dir/source/products/product.cpp.obj.d"
   "C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp" "CMakeFiles/core.dir/source/store.cpp.obj" "gcc" "CMakeFiles/core.dir/source/store.cpp.obj.d"
+  "C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp" "CMakeFiles/core.dir/source/transaction.cpp.obj" "gcc" "CMakeFiles/core.dir/source/transaction.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

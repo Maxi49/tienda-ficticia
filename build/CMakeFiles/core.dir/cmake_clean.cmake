@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/core.dir/source/products/product.cpp.obj.d"
   "CMakeFiles/core.dir/source/store.cpp.obj"
   "CMakeFiles/core.dir/source/store.cpp.obj.d"
+  "CMakeFiles/core.dir/source/transaction.cpp.obj"
+  "CMakeFiles/core.dir/source/transaction.cpp.obj.d"
   "lib/libcore.a"
   "lib/libcore.pdb"
 )

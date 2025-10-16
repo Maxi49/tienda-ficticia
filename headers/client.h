@@ -1,6 +1,4 @@
-#ifndef CLIENT_H
-#define CLIENT_H
-
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -33,4 +31,3 @@ public:
     //Mostrar informacion
     void showInfo() const;
 };
-#endif // CLIENT_H

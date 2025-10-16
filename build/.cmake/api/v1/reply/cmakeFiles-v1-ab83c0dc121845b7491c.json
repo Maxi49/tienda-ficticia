@@ -9,7 +9,8 @@
 				"C:/Users/gimen/Desktop/tienda-ficticia/source/products/game.cpp",
 				"C:/Users/gimen/Desktop/tienda-ficticia/source/products/movie.cpp",
 				"C:/Users/gimen/Desktop/tienda-ficticia/source/products/product.cpp",
-				"C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp"
+				"C:/Users/gimen/Desktop/tienda-ficticia/source/store.cpp",
+				"C:/Users/gimen/Desktop/tienda-ficticia/source/transaction.cpp"
 			],
 			"recurse" : true
 		}

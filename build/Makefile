@@ -287,6 +287,30 @@ source/store.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/store.cpp.s
 .PHONY : source/store.cpp.s
 
+source/transaction.obj: source/transaction.cpp.obj
+.PHONY : source/transaction.obj
+
+# target to build an object file
+source/transaction.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/transaction.cpp.obj
+.PHONY : source/transaction.cpp.obj
+
+source/transaction.i: source/transaction.cpp.i
+.PHONY : source/transaction.i
+
+# target to preprocess a source file
+source/transaction.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/transaction.cpp.i
+.PHONY : source/transaction.cpp.i
+
+source/transaction.s: source/transaction.cpp.s
+.PHONY : source/transaction.s
+
+# target to generate assembly for a file
+source/transaction.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/core.dir/build.make CMakeFiles/core.dir/source/transaction.cpp.s
+.PHONY : source/transaction.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -315,6 +339,9 @@ help:
 	@echo "... source/store.obj"
 	@echo "... source/store.i"
 	@echo "... source/store.s"
+	@echo "... source/transaction.obj"
+	@echo "... source/transaction.i"
+	@echo "... source/transaction.s"
 .PHONY : help
 
 
