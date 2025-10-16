@@ -29,6 +29,7 @@ public:
     //Getters
     int getID() const{return clientID;}
     const std::string& getName() const { return name; }    
+    
     //Setters
     void setName(const std::string& newName);
     

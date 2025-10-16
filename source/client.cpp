@@ -14,7 +14,19 @@ Client :: ~Client(){}
 Client::Client(const Client& other) 
     : clientID(other.clientID), 
       name(other.name) {}
+//Getters
+int Client::getID() const {
+    return clientID;
+}
 
+const std::string& Client::getName() const {
+    return name;
+}
+
+//Setters
+void Client::setName(const std::string& newName) {
+    name = newName;
+}
 // Operador de asigancion
 Client& Client::operator=(const Client& other) {
     if (this != &other) {
