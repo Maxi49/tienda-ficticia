@@ -1,6 +1,6 @@
-#pragma once
-#include "products.h"
+#pragma once    
 #include <string>
+#include "products.h"
 
 class Game : public Product {
 private:
@@ -8,19 +8,35 @@ private:
     std::string players;
 
 public:
-    Game(int id, const std::string& name, const std::string& genero,
-         const std::string& description, float price, int totalStock,
-         const std::string& platform, const std::string& players);
+    // Constructor
+    Game(int id,
+         const std::string& name,
+         const std::string& genero,
+         const std::string& description,
+         float price,
+         int totalStock,
+         const std::string& platform,
+         const std::string& players);
 
-    // Getters
-    std::string getPlatform() const;
-    int getPlayers() const;
+    // Destructor de la clase
+    ~Game();
 
-    // Setters
-    void setPlatform(const std::string& p);
-    void setPlayers(std::string p);
+    // Constructor de copia
+    Game(const Game& other);
 
-        // Sobrescribe métodos virtuales
+    // Operador de asignación por copia
+    Game& operator=(const Game& other);
+
+    // --- Getters ---
+    std::string getPlatform() const { return platform; }
+    std::string getPlayers() const { return players; }
+
+    // --- Setters ---
+    void setPlatform(const std::string& p) { platform = p; }
+    void setPlayers(const std::string& p) { players = p; }
+
+    // --- Sobrescrituras ---
     std::string type() const override;
     void showInfo() const override;
 };
+

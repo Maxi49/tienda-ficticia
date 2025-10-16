@@ -2,7 +2,9 @@
 #include <iostream>
 
 // Constructor
-Client::Client(int id, const std::string& name)
+Client::Client(
+    int id, 
+    const std::string& name)
     : clientID(id), name(name) {}
 
 //Destructor
