@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../../headers/single_include/nlohmann/json.hpp"
+#include "single_include/nlohmann/json.hpp"
 using json = nlohmann::json;
 #include "../headers/products/products.h"   // Base Product (y derivadas)
 #include "../headers/client.h"              // Tu clase Client

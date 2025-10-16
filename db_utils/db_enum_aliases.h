@@ -31,14 +31,14 @@ enum class Alias : unsigned char {
   Atte: Maxi
 */
 
-constexpr const std::string_view to_path(Alias a) {
+constexpr std::string_view to_path(Alias a) {
   switch (a) {
-    case Alias::Products:      return "/db/products.json";
-    case Alias::Games:         return "/db/games.json";
-    case Alias::Store:         return "/db/store.json";
-    case Alias::Clients:       return "/db/clients.json";
-    case Alias::Transactions:  return "/db/transactions.json";
-    case Alias::Movies:        return "/db/movies.json";
+    case Alias::Products:     return "/db/products.json";
+    case Alias::Games:        return "/db/games.json";
+    case Alias::Store:        return "/db/store.json";
+    case Alias::Clients:      return "/db/clients.json";
+    case Alias::Transactions: return "/db/transactions.json";
+    case Alias::Movies:       return "/db/movies.json";
   }
-  return "Unknown"; 
+  return "/db/unknown.json";
 }
