@@ -1,17 +1,16 @@
-#ifndef PRODUCT_H
-#define PRODUCT_H
-
+#pragma once
 #include <optional>
 #include <string>
 #include <utility>
 #include <unordered_map>
 
-#include "single_include/nlohmann/json.hpp"
+#include "../../headers/single_include/nlohmann/json.hpp"
+using json = nlohmann::json;
 #include "../../db_utils/db_enum_aliases.h"
 #include "../../db_utils/json_db_utils.h"
 
 class Product {
-    protected :
+protected :
     int id;
     std::string name;
     std::string genero;
@@ -20,7 +19,7 @@ class Product {
     int totalStock; 
     int availableStock;
     bool rented;
-    std::unordered_map<std::string, int> active_rentals_;
+    std::unordered_map<std::string, int> activeRentals;
 
 public:
     // Constructor
@@ -46,4 +45,3 @@ public:
     float getPrice() const { return price; }
 };
 
-#endif // PRODUCT_H
