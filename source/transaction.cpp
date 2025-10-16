@@ -37,11 +37,15 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
     if (qty <= 0) return false;
     if (!product.canRent(qty)) return false;
 
+    // Pasamos el client_id como string para que coincida con:
+    // bool Product::applyRent(const std::string& client_id, int amountReq)
+    const std::string client_id_str = std::to_string(client.getId());
+
     // Actualizar estado en memoria
-    if (!product.applyRent(qty)) return false;
+    if (!product.applyRent(client_id_str, qty)) return false;
     if (!client.addRental(product.getId(), qty)) {
         // Rollback simple si falla el cliente
-        product.applyReturn(qty);
+        product.applyReturn(client_id_str, qty);
         return false;
     }
 
@@ -49,7 +53,7 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
     if (!add_transaction_record_("rent", product, client, qty)) {
         // Rollback si falló guardar el registro
         client.removeRental(product.getId(), qty);
-        product.applyReturn(qty);
+        product.applyReturn(client_id_str, qty);
         return false;
     }
     return true;
@@ -58,9 +62,11 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
 bool TransactionService::giveBack(Product& product, Client& client, int qty) {
     if (qty <= 0) return false;
 
+    const std::string client_id_str = std::to_string(client.getId());
+
     // Actualizar estado en memoria
     if (!client.removeRental(product.getId(), qty)) return false;
-    if (!product.applyReturn(qty)) {
+    if (!product.applyReturn(client_id_str, qty)) {
         // Rollback si falla el producto
         client.addRental(product.getId(), qty);
         return false;
@@ -69,7 +75,7 @@ bool TransactionService::giveBack(Product& product, Client& client, int qty) {
     // Registrar en transactions.json
     if (!add_transaction_record_("return", product, client, qty)) {
         // Rollback si falló guardar el registro
-        product.applyRent(qty);
+        product.applyRent(client_id_str, qty);
         client.addRental(product.getId(), qty);
         return false;
     }
