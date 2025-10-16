@@ -31,7 +31,7 @@ enum class Alias : unsigned char {
   Atte: Maxi
 */
 
-const std::string to_path(Alias a) {
+constexpr std::string to_path(Alias a) {
   switch (a) {
     case Alias::Products:      return "/db/products.json";
     case Alias::Games:         return "/db/games.json";

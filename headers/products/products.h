@@ -16,7 +16,7 @@ protected :
     std::string genero;
     std::string description;
     float price;
-    int totalStock;
+    int totalStock; 
     int availableStock;
     bool rented;
     std::unordered_map<std::string, int> activeRentals;
