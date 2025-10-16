@@ -1,4 +1,0 @@
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/core.dir
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/app.dir
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/edit_cache.dir
-C:/Users/gimen/Desktop/tienda-ficticia/build/CMakeFiles/rebuild_cache.dir

@@ -28,7 +28,7 @@ public:
     Client& operator=(const Client& other);
 
     //Getters
-    std::string& getID() const{return clientID;}
+    std::string& getId() const{return clientID;}
     std::string getName() const{return name;}
 
     //Mostrar informacion
