@@ -9,9 +9,8 @@
 
 class Client {
 private: 
-    JSON_DB db_{Alias::Clients};
-    std::string& clientID;
-    std::string& name;
+    int clientID;
+    std::string name;
 
 
 public:
@@ -28,9 +27,8 @@ public:
     Client& operator=(const Client& other);
 
     //Getters
-    std::string& getID() const{return clientID;}
-    std::string getName() const{return name;}
-    
+    int getID() const{return clientID;}
+    const std::string& getName() const { return name; }    
     //Setters
     void setName(const std::string& newName);
     
