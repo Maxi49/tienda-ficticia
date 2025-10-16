@@ -1,5 +1,6 @@
 #include "json_db_utils.h"
-
+#include <optional>
+#include <vector>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -83,12 +84,8 @@ JSON_DB::JSON_DB(Alias path_alias)
 }
 
 std::filesystem::path JSON_DB::resolve_path_(Alias path_alias) {
-  std::string raw_path = to_path(path_alias);
-  if (!raw_path.empty() && (raw_path.front() == '/' || raw_path.front() == '\\')) {
-    raw_path.erase(raw_path.begin());
-  }
+  std::filesystem::path resolved{std::string(to_path(path_alias))};
 
-  std::filesystem::path resolved(raw_path);
   if (resolved.is_absolute()) {
     return resolved.lexically_normal();
   }
@@ -99,10 +96,8 @@ std::filesystem::path JSON_DB::resolve_path_(Alias path_alias) {
     std::cerr << "No se pudo obtener el directorio actual: " << ec.message() << std::endl;
     return resolved.lexically_normal();
   }
-
   return (base / resolved).lexically_normal();
 }
-
 void JSON_DB::load_() {
   std::ifstream input(file_path_);
   if (!input.is_open()) {
@@ -138,17 +133,36 @@ bool JSON_DB::save_() {
     }
   }
 
-  std::ofstream output(file_path_, std::ios::binary | std::ios::trunc);
-  if (!output.is_open()) {
-    std::cerr << "No se pudo abrir el archivo " << file_path_.string() << " para escritura."
-              << std::endl;
-    return false;
+  auto temp_path = file_path_;
+  temp_path += ".tmp";
+
+  {
+    std::ofstream tmp(temp_path, std::ios::binary | std::ios::trunc);
+    if (!tmp.is_open()) {
+      std::cerr << "No se pudo abrir " << temp_path.string() << " para escritura.\n";
+      return false;
+    }
+    tmp << std::setw(2) << data_;
+    if (!tmp.good()) {
+      std::cerr << "Fallo al escribir datos en " << temp_path.string() << "\n";
+      return false;
+    }
+    tmp.flush();
+    // (Opcional) fsync vía descriptor si querés máxima durabilidad.
   }
 
-  output << std::setw(2) << data_;
-  if (!output.good()) {
-    std::cerr << "Fallo al escribir los datos en " << file_path_.string() << std::endl;
-    return false;
+  std::error_code ec;
+  std::filesystem::rename(temp_path, file_path_, ec);
+  if (ec) {
+    // En Windows, si el destino existe puede fallar. Probá remove + rename.
+    std::filesystem::remove(file_path_, ec); // ignorá error
+    ec.clear();
+    std::filesystem::rename(temp_path, file_path_, ec);
+    if (ec) {
+      std::cerr << "No se pudo renombrar " << temp_path.string()
+                << " a " << file_path_.string() << ": " << ec.message() << "\n";
+      return false;
+    }
   }
 
   return true;
@@ -157,10 +171,11 @@ bool JSON_DB::save_() {
 std::optional<std::size_t> JSON_DB::index_of_id_(const std::string& id) const {
   for (std::size_t i = 0; i < data_.size(); ++i) {
     const auto& item = data_[i];
-    const auto it = item.find("id");
-    if (it != item.end() && it->is_string() && *it == id) {
-      return i;
-    }
+    auto it = item.find("id");
+    if (it == item.end()) continue;
+
+    if (it->is_string() && *it == id) return i;
+    if (it->is_number() && std::to_string(it->get<long long>()) == id) return i;
   }
   return std::nullopt;
 }
