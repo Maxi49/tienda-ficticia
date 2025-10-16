@@ -60,6 +60,7 @@ bool Product::applyReturn(const std::string& client_id, int amountReq) {
 
 // Salida de información
 void Product::showInfo() const {
+    
     std::cout << "ID: " << id
               << " | Nombre: " << name
               << " | Género: " << genero
