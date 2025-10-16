@@ -30,7 +30,10 @@ public:
     //Getters
     std::string& getID() const{return clientID;}
     std::string getName() const{return name;}
-
+    
+    //Setters
+    void setName(const std::string& newName);
+    
     //Mostrar informacion
     void showInfo() const;
 };
