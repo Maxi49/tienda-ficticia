@@ -9,8 +9,11 @@
 
 class Client {
 private: 
-    int clientID;
-    std:: string name;
+    JSON_DB db_{Alias::Clients};
+    std::string& clientID;
+    std::string& name;
+
+
 public:
     //Constructor 
     Client(int id, const std::string& name);
@@ -25,7 +28,7 @@ public:
     Client& operator=(const Client& other);
 
     //Getters
-    int getID() const{return clientID;}
+    std::string& getID() const{return clientID;}
     std::string getName() const{return name;}
 
     //Mostrar informacion
