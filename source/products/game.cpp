@@ -44,7 +44,8 @@ std::string Game::type() const {
 
 // Mostrar información
 void Game::showInfo() const {
-    std::cout << "[GAME] "
+    std::cout 
+              << " | id: " << id
               << name
               << " | Género: " << genero
               << " | Plataforma: " << platform
