@@ -38,14 +38,22 @@ Movie& Movie::operator=(const Movie& other) {
 
 // Salida de información
 void Movie::showInfo() const {
+    std::string estado;
+    if (availableStock == 0) {
+        estado = "SIN STOCK";
+    } else if (availableStock < totalStock) {
+        estado = "DISPONIBLE (con alquileres)";
+    } else {
+        estado = "DISPONIBLE";
+    }
     std::cout << "[MOVIE] "
               << name
-              << " | Género: " << genero
+              << " | Gonero: " << genero
               << " | Director: " << director
               << " | Duración: " << durationMin << " min"
               << " | Precio: $" << price
               << " | Stock total: " << totalStock
               << " | Disponible: " << availableStock
-              << (rented ? " | Estado: ALQUILADA" : " | Estado: DISPONIBLE")
+              << " | Estado: " << estado
               << std::endl;
 }

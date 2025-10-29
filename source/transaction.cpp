@@ -13,10 +13,11 @@ std::string TransactionService::next_id() const {
     return std::to_string(n + 1);
 }
 
-bool TransactionService::add_transaction_record_(const std::string& action,
-                                                 const Product& product,
-                                                 const Client& client,
-                                                 int qty) {
+bool TransactionService::add_transaction_record_
+(const std::string& action,
+                        const Product& product,
+                        const Client& client,
+                        int qty) {
     json record = {
         {"id",     next_id()},
         {"action", action},                        // "rent" o "return"

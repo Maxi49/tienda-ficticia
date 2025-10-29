@@ -24,7 +24,7 @@ Product::Product(
 bool Product::canRent(int amountReq) const {
     // Se puede alquilar si la cantidad solicitada es válida
     // y hay suficiente stock disponible
-    return amountReq > 0 && availableStock >= amountReq && rented == false;
+    return amountReq > 0 && availableStock >= amountReq;
 };
 
 bool Product::applyRent(const std::string& client_id, int amountReq) {

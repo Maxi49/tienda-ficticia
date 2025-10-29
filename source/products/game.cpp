@@ -44,14 +44,23 @@ std::string Game::type() const {
 
 // Mostrar información
 void Game::showInfo() const {
+    std::string estado;
+    if (availableStock == 0) {
+        estado = "SIN STOCK";
+    } else if (availableStock < totalStock) {
+        estado = "DISPONIBLE (con alquileres)";
+    } else {
+        estado = "DISPONIBLE";
+    }
+
     std::cout << "[GAME] "
               << name
-              << " | Género: " << genero
+              << " | Genero: " << genero
               << " | Plataforma: " << platform
               << " | Jugadores: " << players
               << " | Precio: $" << price
               << " | Stock total: " << totalStock
               << " | Disponible: " << availableStock
-              << (rented ? " | Estado: ALQUILADO" : " | Estado: DISPONIBLE")
+              << " | Estado: " << estado
               << std::endl;
 }
