@@ -62,18 +62,29 @@ bool Client::removeRental(int productId, int qty) {
     return false;
 }
 
-// ============================
-// JSON auxiliar (opcional)
-// ============================
-
 json Client::to_json() const {
     json rentals = json::array();
-    for (const auto& r : activeRentals)
-        rentals.push_back({{"productId", r.productId}, {"qty", r.qty}});
-
+    for (const auto& r : activeRentals) {
+        rentals.push_back({ {"productId", r.productId}, {"qty", r.qty} });
+    }
     return {
-        {"id", std::to_string(clientID)},
+        {"id", std::to_string(clientID)},   // << IMPORTANTE: string
         {"name", name},
-        {"activeRentals", rentals}
+        {"rentals", rentals}
     };
+}
+
+Client Client::from_json(const json& j) {
+    int id = 0;
+    if (j.contains("id")) {
+        if (j["id"].is_string()) id = std::stoi(j["id"].get<std::string>());
+        else if (j["id"].is_number_integer()) id = j["id"].get<int>();
+    }
+    Client c(id, j.value("name", std::string{}));
+    if (j.contains("rentals") && j["rentals"].is_array()) {
+        for (const auto& r : j["rentals"]) {
+            c.addRental(r.value("productId", 0), r.value("qty", 0));
+        }
+    }
+    return c;
 }

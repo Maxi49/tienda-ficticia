@@ -10,7 +10,7 @@
 
 using json = nlohmann::json;
 
-struct Rental {
+struct RentalLine {
     int productId;
     int qty;
 };
@@ -20,7 +20,7 @@ private:
     JSON_DB db_{Alias::Clients};
     int clientID;
     std::string name;
-    std::vector<Rental> activeRentals; // productos alquilados actualmente
+    std::vector<RentalLine> activeRentals; // productos alquilados actualmente
 
 public:
     // Constructor
@@ -37,7 +37,8 @@ public:
 
     // Getters
     int getId() const { return clientID; }
-    std::string getName() const { return name; }
+    const std::string& getName() const { return name; }
+    const std::vector<RentalLine>& getActiveRentals() const { return activeRentals; }
 
     // Mostrar información
     void showInfo() const;
@@ -46,6 +47,7 @@ public:
     bool addRental(int productId, int qty);
     bool removeRental(int productId, int qty);
 
-    // (Opcional) convertir a JSON si después querés persistir
-    json to_json() const;
+    // ---- Serialización ----
+    nlohmann::json to_json() const;
+    static Client from_json(const nlohmann::json& j);
 };
