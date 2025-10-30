@@ -38,5 +38,6 @@ public:
 
     // --- Sobrescrituras ---
     std::string type() const override { return "movie"; }
+    nlohmann::json to_json() const override;
     void showInfo() const override;
 };

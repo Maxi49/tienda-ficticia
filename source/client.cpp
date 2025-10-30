@@ -62,13 +62,14 @@ bool Client::removeRental(int productId, int qty) {
     return false;
 }
 
+// Serialización
 json Client::to_json() const {
     json rentals = json::array();
     for (const auto& r : activeRentals) {
         rentals.push_back({ {"productId", r.productId}, {"qty", r.qty} });
     }
     return {
-        {"id", std::to_string(clientID)},   // << IMPORTANTE: string
+        {"id", std::to_string(clientID)}, // string (requisito de tu JSON_DB)
         {"name", name},
         {"rentals", rentals}
     };
@@ -87,4 +88,13 @@ Client Client::from_json(const json& j) {
         }
     }
     return c;
+}
+
+// Persistencia directa desde Client
+bool Client::upsert(const Client& c) {
+    JSON_DB db{Alias::Clients};
+    json obj = c.to_json();
+    const std::string id = obj["id"].get<std::string>();
+    return db.find_by_id(id) ? db.update_by_id(std::move(obj))
+                             : db.insert(std::move(obj));
 }

@@ -10,38 +10,36 @@ using json = nlohmann::json;
 #include "../../db_utils/json_db_utils.h"
 
 class Product {
-protected :
+protected:
     int id;
     std::string name;
     std::string genero;
     std::string description;
     float price;
-    int totalStock; 
+    int totalStock;
     int availableStock;
     bool rented;
     std::unordered_map<std::string, int> activeRentals;
 
+    // JSON común
+    nlohmann::json base_json_() const;
+
 public:
-    // Constructor
     Product(int id, const std::string& name, const std::string& genero,
             const std::string& description, float price, int totalStock);
 
-    // Destructor virtual (necesario si heredas)
-    virtual ~Product() = default;
-
-    // Métodos virtuales para que las clases hijas los redefinan
-    virtual std::string type() const = 0;
-    virtual void showInfo() const = 0;
-
-    // Métodos internos de stock
-    bool canRent(int qty) const;
-    bool applyRent(const std::string& client_id, int qty);
-    bool applyReturn(const std::string& client_id, int qty);
-
-    // Getters
+    // Getters mínimos
     int getId() const { return id; }
-    std::string getName() const { return name; }
-    int getAvailableStock() const { return availableStock; }
-    float getPrice() const { return price; }
-};
+    const std::string& getName() const { return name; }
 
+    // Stock / rentals
+    bool canRent(int amountReq) const;
+    bool applyRent(const std::string& client_id, int amountReq);
+    bool applyReturn(const std::string& client_id, int amountReq);
+
+    // Polimorfismo
+    virtual std::string type() const = 0;           // "game" / "movie"
+    virtual nlohmann::json to_json() const;         // puede sobreescribirse
+    virtual void showInfo() const = 0;              // ya lo usás
+    virtual ~Product() = default;
+};

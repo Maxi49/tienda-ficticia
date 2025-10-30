@@ -1,10 +1,9 @@
-// source/transaction.cpp
 #include "../headers/transaction.h"
 using json = nlohmann::json;
 
 TransactionService::TransactionService()
     : transactions_db_(Alias::Transactions),
-      clients_db_(Alias::Clients) {}
+      store_() {}
 
 std::string TransactionService::next_id() const {
     const auto& all = transactions_db_.all();
@@ -35,11 +34,6 @@ bool TransactionService::add_transaction_record_(
     return transactions_db_.insert(std::move(record));
 }
 
-// >>> NUEVO: alta/actualización de cliente sin transacción
-bool TransactionService::registerClient(const Client& client) {
-    return persist_client_snapshot_(client);
-}
-
 bool TransactionService::rent(Product& product, Client& client, int qty) {
     if (qty <= 0) return false;
     if (!product.canRent(qty)) return false;
@@ -58,8 +52,10 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
         return false;
     }
 
-    // snapshot de cliente
-    persist_client_snapshot_(client);
+    // ---- Persistencias de snapshots (no rompen el log si fallan) ----
+    Client::upsert(client);     // db/clients.json
+    store_.upsert(product);     // db/games.json / db/movies.json
+
     return true;
 }
 
@@ -80,19 +76,9 @@ bool TransactionService::giveBack(Product& product, Client& client, int qty) {
         return false;
     }
 
-    // snapshot de cliente
-    persist_client_snapshot_(client);
+    // ---- Persistencias de snapshots ----
+    Client::upsert(client);
+    store_.upsert(product);
+
     return true;
-}
-
-// Upsert del cliente en db/clients.json usando tu JSON_DB
-bool TransactionService::persist_client_snapshot_(const Client& client) {
-    json obj = client.to_json(); // {"id":"...","name":"...","rentals":[...]}
-
-    const std::string idStr = obj["id"].get<std::string>();
-    if (clients_db_.find_by_id(idStr)) {
-        return clients_db_.update_by_id(std::move(obj));
-    } else {
-        return clients_db_.insert(std::move(obj));
-    }
 }

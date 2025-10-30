@@ -50,4 +50,7 @@ public:
     // ---- Serialización ----
     nlohmann::json to_json() const;
     static Client from_json(const nlohmann::json& j);
+
+    // ---- Persistencia usando JSON_DB (Alias::Clients) ----
+    static bool upsert(const Client& c);      // create/update por id
 };

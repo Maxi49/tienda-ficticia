@@ -1,7 +1,7 @@
 #include "../../headers/products/products.h"
 #include <iostream>   // std::cout, std::endl
 
-// Constructor
+// Constructor (igual al tuyo)
 Product::Product(
     int id,
     const std::string& name,
@@ -10,50 +10,59 @@ Product::Product(
     float price,
     int totalStock)
     : id(id),
-    name(name),
-    genero(genero),
-    description(description),
-    price(price),
+      name(name),
+      genero(genero),
+      description(description),
+      price(price),
       totalStock(totalStock),
       availableStock(totalStock),
       rented(false),
       activeRentals{} {}
 
-// Métodos internos de stock
-
+// Métodos de stock (tus implementaciones)
 bool Product::canRent(int amountReq) const {
-    // Se puede alquilar si la cantidad solicitada es válida
-    // y hay suficiente stock disponible
     return amountReq > 0 && availableStock >= amountReq;
-};
+}
 
 bool Product::applyRent(const std::string& client_id, int amountReq) {
     if (!canRent(amountReq)) return false;
-
-    // Actualiza stock y registro de alquileres activos
     availableStock -= amountReq;
     activeRentals[client_id] += amountReq;
-
-    // Si hay menos disponibles que el total, significa que hay algo alquilado
     rented = (availableStock < totalStock);
     return true;
-};
+}
 
 bool Product::applyReturn(const std::string& client_id, int amountReq) {
     if (amountReq <= 0) return false;
-
     auto it = activeRentals.find(client_id);
     if (it == activeRentals.end() || it->second < amountReq) return false;
-
-    // Revertir cantidades
     it->second -= amountReq;
     availableStock += amountReq;
-
-    if (it->second == 0) {
-        activeRentals.erase(it);
-    }
-
-    // Si el stock disponible vuelve a ser igual al total, ya no hay nada alquilado
+    if (it->second == 0) activeRentals.erase(it);
     rented = (availableStock < totalStock);
     return true;
-};
+}
+
+// ---- Serialización base ----
+json Product::base_json_() const {
+    json rentals = json::object();
+    for (const auto& [cid, q] : activeRentals) rentals[cid] = q;
+
+    return json{
+        {"id",             std::to_string(id)}, // tu JSON_DB exige string
+        {"name",           name},
+        {"genero",         genero},
+        {"description",    description},
+        {"price",          price},
+        {"totalStock",     totalStock},
+        {"availableStock", availableStock},
+        {"rented",         rented},
+        {"activeRentals",  rentals}
+    };
+}
+
+json Product::to_json() const {
+    json j = base_json_();
+    j["type"] = "product";
+    return j;
+}

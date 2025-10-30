@@ -37,11 +37,6 @@ Game& Game::operator=(const Game& other) {
     return *this;
 }
 
-// Método type()
-std::string Game::type() const {
-    return "game";
-}
-
 // Mostrar información
 void Game::showInfo() const {
     std::string estado;
@@ -63,4 +58,12 @@ void Game::showInfo() const {
               << " | Disponible: " << availableStock
               << " | Estado: " << estado
               << std::endl;
+}
+
+json Game::to_json() const {
+    json j = base_json_();
+    j["type"]     = "game";
+    j["platform"] = platform;
+    j["players"]  = players;
+    return j;
 }

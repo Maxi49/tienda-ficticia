@@ -229,14 +229,4 @@ bool JSON_DB::delete_by_id(const std::string& id) {
   return false;
 }
 
-std::vector<json> JSON_DB::search_by_class_field(const std::string& field, const json& value) const {
-  std::vector<json> matches;
-  for (const auto& item : data_) {
-    if (!item.is_object()) continue;
-    const auto it = item.find(field);
-    if (it != item.end() && *it == value) {
-      matches.push_back(item);
-    }
-  }
-  return matches;
-}
+

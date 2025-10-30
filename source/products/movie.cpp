@@ -57,3 +57,11 @@ void Movie::showInfo() const {
               << " | Estado: " << estado
               << std::endl;
 }
+
+json Movie::to_json() const {
+    json j = base_json_();
+    j["type"]        = "movie";
+    j["director"]    = director;
+    j["durationMin"] = durationMin;
+    return j;
+}
