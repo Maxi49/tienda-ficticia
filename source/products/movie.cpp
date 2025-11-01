@@ -65,3 +65,26 @@ json Movie::to_json() const {
     j["durationMin"] = durationMin;
     return j;
 }
+
+Movie Movie::from_json(const json& j) {
+    // 1) Construimos un Movie “vacío” (valores neutros)
+    Movie m(
+        /*id*/           0,
+        /*name*/         "",
+        /*genero*/       "",
+        /*description*/  "",
+        /*price*/        0.0f,
+        /*totalStock*/   0,
+        /*director*/     "",
+        /*durationMin*/  0
+    );
+
+    // 2) Cargamos el BLOQUE BASE con la inversa del base_json_()
+    Product::from_json_base(m, j);
+
+    // 3) Cargamos SOLO los campos propios de Movie (simétrico a tu to_json)
+    m.director    = j.value("director", "");
+    m.durationMin = j.value("durationMin", 0);
+
+    return m;
+}

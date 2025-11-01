@@ -66,3 +66,32 @@ json Product::to_json() const {
     j["type"] = "product";
     return j;
 }
+
+static int parse_id_(const nlohmann::json& j) {
+    const auto& idv = j.at("id");
+    return idv.is_string() ? std::stoi(idv.get<std::string>())
+                           : idv.get<int>();
+}
+
+// ⬇⬇⬇ Inversa de base_json_(): rellena el “bloque base” del producto
+void Product::from_json_base(Product& p, const nlohmann::json& j) {
+    // Campos “fijos” del producto
+    p.id          = parse_id_(j);
+    p.name        = j.value("name", "");
+    p.genero      = j.value("genero", "");
+    p.description = j.value("description", "");
+    p.price       = j.value("price", 0.0f);
+    p.totalStock  = j.value("totalStock", 0);
+
+    // Estado/snapshot
+    p.availableStock = j.value("availableStock", p.totalStock);
+    p.rented         = j.value("rented", false);
+
+    // Alquileres activos { "client_id_str": qty }
+    p.activeRentals.clear();
+    if (j.contains("activeRentals") && j["activeRentals"].is_object()) {
+        for (auto it = j["activeRentals"].begin(); it != j["activeRentals"].end(); ++it) {
+            p.activeRentals[it.key()] = it.value().get<int>();
+        }
+    }
+}

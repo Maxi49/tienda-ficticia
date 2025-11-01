@@ -1,9 +1,9 @@
 #include "../headers/transaction.h"
 using json = nlohmann::json;
 
-TransactionService::TransactionService()
+TransactionService::TransactionService(Store& s)
     : transactions_db_(Alias::Transactions),
-      store_() {}
+      store_(s) {}
 
 std::string TransactionService::next_id() const {
     const auto& all = transactions_db_.all();
@@ -52,10 +52,9 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
         return false;
     }
 
-    // ---- Persistencias de snapshots (no rompen el log si fallan) ----
-    Client::upsert(client);     // db/clients.json
-    store_.upsert(product);     // db/games.json / db/movies.json
-
+    // Snapshots (no romper log si fallan)
+    Client::upsert(client);    // db/clients.json
+    store_.upsert(product);    // db/games.json / db/movies.json
     return true;
 }
 
@@ -76,9 +75,7 @@ bool TransactionService::giveBack(Product& product, Client& client, int qty) {
         return false;
     }
 
-    // ---- Persistencias de snapshots ----
     Client::upsert(client);
     store_.upsert(product);
-
     return true;
 }

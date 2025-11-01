@@ -67,3 +67,23 @@ json Game::to_json() const {
     j["players"]  = players;
     return j;
 }
+
+Game Game::from_json(const json& j) {
+    Game g(
+        /*id*/           0,
+        /*name*/         "",
+        /*genero*/       "",
+        /*description*/  "",
+        /*price*/        0.0f,
+        /*totalStock*/   0,
+        /*platform*/     "",
+        /*players*/      ""
+    );
+
+    Product::from_json_base(g, j);       // ← bloque base
+    // Propios de Game (simétrico a tu to_json)
+    g.platform = j.value("platform", "");
+    g.players  = j.value("players", "");
+
+    return g;
+}

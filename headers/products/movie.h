@@ -2,6 +2,7 @@
 
 #include <string>
 #include "products.h"
+#include "single_include/nlohmann/json.hpp"
 
 class Movie : public Product {
 private:
@@ -39,5 +40,6 @@ public:
     // --- Sobrescrituras ---
     std::string type() const override { return "movie"; }
     nlohmann::json to_json() const override;
+    static Movie from_json(const nlohmann::json& j);
     void showInfo() const override;
 };

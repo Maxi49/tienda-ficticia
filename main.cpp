@@ -1,66 +1,127 @@
 #include <iostream>
-#include "headers/client.h"
-#include "headers/products/game.h"
-#include "headers/products/movie.h"
+#include <limits>
+#include "headers/store.h"
 #include "headers/transaction.h"
-#include "headers/store.h"   // solo si querés guardar catálogo manualmente (opcional)
+
+// Entradas seguras básicas
+int read_int(const char* prompt) {
+    int x;
+    for (;;) {
+        std::cout << prompt;
+        if (std::cin >> x) return x;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Entrada invalida.\n";
+    }
+}
+float read_float(const char* prompt) {
+    float x;
+    for (;;) {
+        std::cout << prompt;
+        if (std::cin >> x) return x;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Entrada invalida.\n";
+    }
+}
+std::string read_str(const char* prompt) {
+    std::cout << prompt;
+    std::string s;
+    std::getline(std::cin >> std::ws, s);
+    return s;
+}
 
 int main() {
-    std::cout << "=== PRUEBA INTEGRAL (Client + Product + Store + Transaction) ===\n";
+    // 1) Inicializar servicios
+    Store store;                 // dueño del catálogo en memoria + persistencia
+    store.load_from_disk();      // levanta games/movies/clients desde JSON
+    TransactionService tx(store);// tx usará store para snapshot de productos
 
-    // 1) Crear clientes
-    Client c1(1, "Maxi");
-    Client c2(2, "Ana");
+    // 2) Menú de texto
+    for (;;) {
+        std::cout <<
+          "\n=== MENU ===\n"
+          "1) Ver productos\n"
+          "2) Ver clientes\n"
+          "3) Agregar videojuego\n"
+          "4) Agregar pelicula\n"
+          "5) Agregar cliente\n"
+          "6) Alquilar\n"
+          "7) Devolver\n"
+          "0) Salir (guarda catalogo)\n";
+        int op = read_int("Opcion: ");
+        if (op == 0) {
+            store.save_to_disk(); // snapshot final del catálogo (productos)
+            std::cout << "Adios!\n";
+            break;
+        }
 
-    // (Opcional) Persistir alta de clientes aunque no transaccionen aún:
-    Client::upsert(c1);
-    Client::upsert(c2);
-
-    // 2) Crear productos
-    Game  g1(101, "God of War", "Accion", "Juego de PS4", 59.99f, 5, "PS4", "1 jugador");
-    Movie m1(201, "Interstellar", "Sci-Fi", "Exploración espacial", 39.99f, 3, "Christopher Nolan", 169);
-
-    // (Opcional) Guardar el catálogo inicial sin transaccionar:
-    // Store store;
-    // store.upsert(g1);   // -> db/games.json
-    // store.upsert(m1);   // -> db/movies.json
-
-    // 3) Mostrar estado inicial
-    std::cout << "\n--- Estado inicial ---\n";
-    g1.showInfo();
-    m1.showInfo();
-    c1.showInfo();
-    c2.showInfo();
-
-    // 4) Transacciones
-    TransactionService tx;
-
-    std::cout << "\n--- Alquiler 1: Maxi alquila 2 copias de God of War ---\n";
-    if (tx.rent(g1, c1, 2))  std::cout << "✅ Rent OK\n"; else std::cout << "❌ Rent FAIL\n";
-
-    std::cout << "\n--- Alquiler 2: Ana alquila 1 copia de Interstellar ---\n";
-    if (tx.rent(m1, c2, 1))  std::cout << "✅ Rent OK\n"; else std::cout << "❌ Rent FAIL\n";
-
-    std::cout << "\n--- Estado luego de alquilar ---\n";
-    g1.showInfo();
-    m1.showInfo();
-    c1.showInfo();
-    c2.showInfo();
-
-    std::cout << "\n--- Devolución: Maxi devuelve 1 copia de God of War ---\n";
-    if (tx.giveBack(g1, c1, 1)) std::cout << "✅ Return OK\n"; else std::cout << "❌ Return FAIL\n";
-
-    std::cout << "\n--- Estado final ---\n";
-    g1.showInfo();
-    m1.showInfo();
-    c1.showInfo();
-    c2.showInfo();
-
-    std::cout << "\nRevisá los archivos JSON actualizados en /db/ :\n"
-                 " - clients.json (snapshot de clientes)\n"
-                 " - games.json   (snapshot de games)\n"
-                 " - movies.json  (snapshot de movies)\n"
-                 " - transactions.json (historial de acciones)\n";
+        switch (op) {
+        case 1: {
+            store.list_products();
+            break;
+        }
+        case 2: {
+            store.list_clients();
+            break;
+        }
+        case 3: { // agregar game
+            int id = read_int("id: ");
+            auto name = read_str("name: ");
+            auto gen  = read_str("genero: ");
+            auto desc = read_str("description: ");
+            float price = read_float("price: ");
+            int stock   = read_int("totalStock: ");
+            auto plat   = read_str("platform: ");
+            auto plays  = read_str("players: ");
+            bool ok = store.add_game(id, name, gen, desc, price, stock, plat, plays);
+            std::cout << (ok ? "Game agregado.\n" : "Error (id duplicado o persistencia).\n");
+            break;
+        }
+        case 4: { // agregar movie
+            int id = read_int("id: ");
+            auto name = read_str("name: ");
+            auto gen  = read_str("genero: ");
+            auto desc = read_str("description: ");
+            float price = read_float("price: ");
+            int stock   = read_int("totalStock: ");
+            auto dir    = read_str("director: ");
+            int dur     = read_int("durationMin: ");
+            bool ok = store.add_movie(id, name, gen, desc, price, stock, dir, dur);
+            std::cout << (ok ? "Movie agregada.\n" : "Error (id duplicado o persistencia).\n");
+            break;
+        }
+        case 5: { // agregar cliente
+            int id = read_int("id: ");
+            auto name = read_str("name: ");
+            bool ok = store.add_client(id, name);
+            std::cout << (ok ? "Cliente agregado.\n" : "Error (id duplicado o persistencia).\n");
+            break;
+        }
+        case 6: { // alquilar
+            int cid = read_int("ID cliente: ");
+            int pid = read_int("ID producto: ");
+            int qty = read_int("Cantidad: ");
+            Client*  c = store.find_client(cid);
+            Product* p = store.find_product(pid);
+            if (!c || !p) { std::cout << "Cliente o producto inexistente.\n"; break; }
+            std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
+            break;
+        }
+        case 7: { // devolver
+            int cid = read_int("ID cliente: ");
+            int pid = read_int("ID producto: ");
+            int qty = read_int("Cantidad: ");
+            Client*  c = store.find_client(cid);
+            Product* p = store.find_product(pid);
+            if (!c || !p) { std::cout << "Cliente o producto inexistente.\n"; break; }
+            std::cout << (tx.giveBack(*p, *c, qty) ? "Devolucion OK.\n" : "Devolucion rechazada.\n");
+            break;
+        }
+        default:
+            std::cout << "Opcion invalida.\n";
+        }
+    }
 
     return 0;
 }

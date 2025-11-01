@@ -23,6 +23,9 @@ protected:
 
     // JSON común
     nlohmann::json base_json_() const;
+    // “inversa” de base_json_()
+    // Carga TODOS los campos base desde j dentro de 'p'
+    static void from_json_base(Product& p, const nlohmann::json& j);
 
 public:
     Product(int id, const std::string& name, const std::string& genero,

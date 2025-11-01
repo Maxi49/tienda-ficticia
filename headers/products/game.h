@@ -1,6 +1,7 @@
 #pragma once    
 #include <string>
 #include "products.h"
+#include "single_include/nlohmann/json.hpp"
 
 
 class Game : public Product {
@@ -16,6 +17,7 @@ public:
     Game& operator=(const Game& other);
 
     std::string type() const override { return "game"; }
-    nlohmann::json to_json() const override;
+    nlohmann::json to_json() const override;    
+    static Game from_json(const nlohmann::json& j); 
     void showInfo() const override;
 };
