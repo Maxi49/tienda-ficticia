@@ -76,6 +76,12 @@ void Store::save_to_disk() {
         if (ptr) upsert_product_(*ptr);
     // Los clientes se guardan cuando se crean o en transacciones
 }
+// Helper para búsquedas case-insensitive
+static std::string to_lower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+    return s;
+}
 
 // ---------- Altas ----------
 bool Store::add_game(int id, const std::string& name, const std::string& genero,
@@ -126,4 +132,76 @@ void Store::list_clients() const {
     if (clients_.empty()) { std::cout << "No hay clientes.\n"; return; }
     for (const auto& [id, c] : clients_)
         if (c) c->showInfo();
+}
+
+Client* Store::find_client_by_name(const std::string& name) {
+    std::vector<Client*> matches;
+    for (auto& [_, c] : clients_) {
+        if (c && c->getName() == name)
+            matches.push_back(c.get());
+    }
+
+    if (matches.empty()) return nullptr;
+    if (matches.size() == 1) return matches.front();
+
+    // ⚠️ varios con el mismo nombre → pedir elección
+    std::cout << "Hay " << matches.size() << " clientes llamados '" << name << "':\n";
+    for (size_t i = 0; i < matches.size(); ++i)
+        std::cout << "  [" << i+1 << "] id=" << matches[i]->getId() << "\n";
+
+    int sel;
+    std::cout << "Elegí número: ";
+    std::cin >> sel;
+    if (sel < 1 || sel > (int)matches.size()) return nullptr;
+    return matches[sel-1];
+}
+
+
+Product* Store::find_product_by_name(const std::string& name) {
+    const std::string key = to_lower(name);
+    for (auto& [id, up] : catalog_) {
+        if (!up) continue;
+        if (to_lower(up->getName()) == key) return up.get();
+    }
+    return nullptr;
+}
+
+void Store::print_client_transactions(int clientId) const {
+    JSON_DB txdb{Alias::Transactions};
+    const auto& arr = txdb.all();
+    if (!arr.is_array() || arr.empty()) {
+        std::cout << "No hay transacciones registradas.\n";
+        return;
+    }
+
+    bool found = false;
+    for (const auto& t : arr) {
+        // --- cliente.id puede ser string o número ---
+        int cid = -1;
+        const auto& jcid = t["client"]["id"];
+        if (jcid.is_string())       cid = std::stoi(jcid.get<std::string>());
+        else if (jcid.is_number())  cid = jcid.get<int>();
+        else continue;
+
+        if (cid != clientId) continue;
+        found = true;
+
+        std::string action = t.value("action", "?");
+        int qty = t.value("qty", 0);
+
+        // --- product.id puede ser string o número ---
+        int pid = -1;
+        const auto& jpid = t["product"]["id"];
+        if (jpid.is_string())       pid = std::stoi(jpid.get<std::string>());
+        else if (jpid.is_number())  pid = jpid.get<int>();
+
+        std::string pname = t["product"].value("name", "(sin nombre)");
+
+        std::cout << "- " << action
+                  << "  " << qty << " x [" << pid << "] "
+                  << pname << "\n";
+    }
+
+    if (!found)
+        std::cout << "El cliente no tiene transacciones registradas.\n";
 }

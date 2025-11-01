@@ -22,12 +22,12 @@ bool TransactionService::add_transaction_record_(
         {"action", action},
         {"qty",    qty},
         {"product", {
-            {"id",   product.getId()},
+            {"id", std::to_string(product.getId())},
             {"name", product.getName()},
             {"type", product.type()}
         }},
         {"client", {
-            {"id",   client.getId()},
+            {"id", std::to_string(client.getId())},
             {"name", client.getName()}
         }}
     };

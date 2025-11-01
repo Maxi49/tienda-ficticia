@@ -50,9 +50,14 @@ public:
     // ---------- Consultas ----------
     Product* find_product(int id);
     Client*  find_client(int id);
+    // Búsquedas por nombre (case-insensitive)
+    Client*  find_client_by_name(const std::string& name);
+    Product* find_product_by_name(const std::string& name);
+
 
     void list_products() const;
     void list_clients()  const;
+    void print_client_transactions(int clientId) const;
 
     // Usado por TransactionService para guardar snapshots
     bool upsert(const Product& p) { return upsert_product_(p); }

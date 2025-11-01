@@ -1,9 +1,11 @@
 #include <iostream>
 #include <limits>
+#include <algorithm>
+#include <cctype>
 #include "headers/store.h"
 #include "headers/transaction.h"
 
-// Entradas seguras básicas
+// ---- Entradas seguras ----
 int read_int(const char* prompt) {
     int x;
     for (;;) {
@@ -31,6 +33,26 @@ std::string read_str(const char* prompt) {
     return s;
 }
 
+// ---- Resolver cliente/producto por ID o nombre ----
+Client* resolve_client(Store& store) {
+    std::string token = read_str("Cliente (id o nombre): ");
+    bool isnum = !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
+    if (isnum) {
+        int cid = std::stoi(token);
+        return store.find_client(cid);
+    }
+    return store.find_client_by_name(token);
+}
+Product* resolve_product(Store& store) {
+    std::string token = read_str("Producto (id o nombre): ");
+    bool isnum = !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
+    if (isnum) {
+        int pid = std::stoi(token);
+        return store.find_product(pid);
+    }
+    return store.find_product_by_name(token);
+}
+
 int main() {
     // 1) Inicializar servicios
     Store store;                 // dueño del catálogo en memoria + persistencia
@@ -42,12 +64,13 @@ int main() {
         std::cout <<
           "\n=== MENU ===\n"
           "1) Ver productos\n"
-          "2) Ver clientes\n"
+          "2) Ver clientes (con nombres de alquileres)\n"
           "3) Agregar videojuego\n"
           "4) Agregar pelicula\n"
           "5) Agregar cliente\n"
-          "6) Alquilar\n"
-          "7) Devolver\n"
+          "6) Alquilar (por id o nombre)\n"
+          "7) Devolver (por id o nombre)\n"
+          "8) Ver historial de un cliente\n"
           "0) Salir (guarda catalogo)\n";
         int op = read_int("Opcion: ");
         if (op == 0) {
@@ -62,6 +85,7 @@ int main() {
             break;
         }
         case 2: {
+            // Muestra TODOS los clientes; si tienen alquileres, imprime nombres y qty
             store.list_clients();
             break;
         }
@@ -98,24 +122,28 @@ int main() {
             std::cout << (ok ? "Cliente agregado.\n" : "Error (id duplicado o persistencia).\n");
             break;
         }
-        case 6: { // alquilar
-            int cid = read_int("ID cliente: ");
-            int pid = read_int("ID producto: ");
+        case 6: { // alquilar (por id o nombre)
+            Client*  c = resolve_client(store);
+            Product* p = resolve_product(store);
+            if (!c || !p) { std::cout << "Cliente o producto no encontrado.\n"; break; }
             int qty = read_int("Cantidad: ");
-            Client*  c = store.find_client(cid);
-            Product* p = store.find_product(pid);
-            if (!c || !p) { std::cout << "Cliente o producto inexistente.\n"; break; }
             std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
             break;
         }
-        case 7: { // devolver
-            int cid = read_int("ID cliente: ");
-            int pid = read_int("ID producto: ");
+        case 7: { // devolver (por id o nombre)
+            Client*  c = resolve_client(store);
+            Product* p = resolve_product(store);
+            if (!c || !p) { std::cout << "Cliente o producto no encontrado.\n"; break; }
             int qty = read_int("Cantidad: ");
-            Client*  c = store.find_client(cid);
-            Product* p = store.find_product(pid);
-            if (!c || !p) { std::cout << "Cliente o producto inexistente.\n"; break; }
             std::cout << (tx.giveBack(*p, *c, qty) ? "Devolucion OK.\n" : "Devolucion rechazada.\n");
+            break;
+        }
+        case 8: { // historial
+            Client* c = resolve_client(store);
+            if (!c) { std::cout << "Cliente no encontrado.\n"; break; }
+            std::cout << "\nHistorial de " << c->getName()
+                      << " (id=" << c->getId() << "):\n";
+            store.print_client_transactions(c->getId());
             break;
         }
         default:
