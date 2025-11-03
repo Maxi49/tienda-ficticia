@@ -52,3 +52,9 @@ pnpm-lock.yaml
 # === OTROS ===
 coverage/
 *.iml
+
+/cmake-build-*/
+/build/
+/bin/
+/out/
+

@@ -19,7 +19,14 @@ using nlohmann::json;
 */
 bool Store::upsertJson(json obj, JSON_DB& db) {
     try {
-        const std::string id = obj.at("id").get<std::string>(); // at() para validar clave
+        std::string id;
+        const auto& jid = obj.at("id");
+        if (jid.is_string())            id = jid.get<std::string>();
+        else if (jid.is_number_integer()) id = std::to_string(jid.get<int>());
+        else {
+            std::cerr << "[Store::upsertJson] 'id' con tipo inválido\n";
+            return false;
+        }
         return db.find_by_id(id) ? db.update_by_id(std::move(obj))
                                  : db.insert(std::move(obj));
     } catch (const std::exception& e) {
@@ -240,7 +247,10 @@ void Store::saveToDisk() {
 int Store::addGame(const std::string& name, const std::string& genero,
                    const std::string& desc, float price, int stock,
                    const std::string& platform, const std::string& players) {
-    const int id = nextGameId_++;
+    int id = nextGameId_++;
+    while (catalog_.count(id)) {      // simétrico por las dudas
+        id = nextGameId_++;
+    }
     return addProduct(id, [&] {
         return std::make_unique<Game>(id, name, genero, desc, price, stock, platform, players);
     }) ? id : -1;
@@ -253,7 +263,10 @@ int Store::addGame(const std::string& name, const std::string& genero,
 int Store::addMovie(const std::string& name, const std::string& genero,
                     const std::string& desc, float price, int stock,
                     const std::string& director, int durationMin) {
-    const int id = nextMovieId_++;
+    int id = nextMovieId_++;
+    while (catalog_.count(id)) {      // evita choque con games
+        id = nextMovieId_++;
+    }
     return addProduct(id, [&] {
         return std::make_unique<Movie>(id, name, genero, desc, price, stock, director, durationMin);
     }) ? id : -1;
