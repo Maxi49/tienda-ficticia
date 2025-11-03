@@ -4,8 +4,8 @@
 #include <vector>
 #include "headers/store.h"
 #include "headers/transaction.h"
-#include "read_inputs.h"
-#include "templates.h"
+#include "utils/read_inputs.h"
+#include "utils/templates.h"
 
 /**
  * @brief Selecciona un cliente por ID numérico o por nombre (con coincidencia parcial).
@@ -135,7 +135,7 @@ inline void run_menu_loop(const std::string& title,
 {
     for (;;) {
         print_menu(title, items, exitKey, exitLabel);
-        int op = readInt("Opción: ");
+        int op = readInt("Opcion: ");
 
         if (op == exitKey) break;
 
@@ -151,7 +151,7 @@ inline void run_menu_loop(const std::string& title,
                 break;
             }
         }
-        if (!dispatched) std::cout << "⚠️ Opción inválida.\n";
+        if (!dispatched) std::cout << "Opcion invalida.\n";
     }
 }
 
@@ -172,21 +172,21 @@ inline void run_menu_loop(const std::string& title,
 void administrate_games(Store& store) {
     run_menu_loop("Administrar Juegos", {
         {1, "Mostrar juegos", [&]{ store.listGames(); }},
-        {2, "Añadir juego",   [&]{
+        {2, "Agregar juego",   [&]{
             GameInput g = store.readGameInput();
             auto& [name, genre, description, platform, players, price, stock] = g;
             const int id = store.addGame(name, genre, description, price, stock, platform, players);
             std::cout << (id >= 0
-                ? "✅ Juego agregado con ID " + std::to_string(id) + ".\n"
-                : "❌ Error al agregar.\n");
+                ? "Juego agregado con ID " + std::to_string(id) + ".\n"
+                : "Error al agregar.\n");
         }},
         {3, "Buscar juego (por nombre)", [&]{
             const auto name = readStr("Nombre a buscar: ");
             const std::vector<Product*> out = store.findProductsByName(name);
             showVectorInfo(out);
         }},
-        {4, "Filtrar juego por género (exacto)", [&]{
-            const auto gen = readStr("Género (exacto): ");
+        {4, "Filtrar juego por genero (exacto)", [&]{
+            const auto gen = readStr("Genero (exacto): ");
             store.listGamesByGenre(gen);
         }},
     });
@@ -212,8 +212,8 @@ void administrate_clients(Store& store) {
             auto& [name] = c;
             const int id = store.addClient(name);
             std::cout << (id >= 0
-                ? "✅ Cliente creado con ID " + std::to_string(id) + ".\n"
-                : "❌ Error al crear cliente.\n");
+                ? "Cliente creado con ID " + std::to_string(id) + ".\n"
+                : "Error al crear cliente.\n");
         }},
         {3, "Ver historial de un cliente", [&]{
             Client* c = chooseClient(store);
@@ -237,23 +237,23 @@ void administrate_clients(Store& store) {
  * @param store Tienda a operar (lectura y altas).
  */
 void administrate_movies(Store& store) {
-    run_menu_loop("Administrar Películas", {
-        {1, "Mostrar películas", [&]{ store.listMovies(); }},
-        {2, "Añadir película",   [&]{
+    run_menu_loop("Administrar Peliculas", {
+        {1, "Mostrar peliculas", [&]{ store.listMovies(); }},
+        {2, "Agregar pelicula",   [&]{
             MovieInput m = store.readMovieInput();
             auto& [name, genre, description, director, price, stock, duration] = m;
             const int id = store.addMovie(name, genre, description, price, stock, director, duration);
             std::cout << (id >= 0
-                ? "✅ Película agregada con ID " + std::to_string(id) + ".\n"
-                : "❌ Error al agregar.\n");
+                ? "Pelicula agregada con ID " + std::to_string(id) + ".\n"
+                : "Error al agregar.\n");
         }},
-        {3, "Buscar película (por nombre)", [&]{
+        {3, "Buscar pelicula (por nombre)", [&]{
             const auto name = readStr("Nombre a buscar: ");
             const std::vector<Product*> out = store.findProductsByName(name);
             showVectorInfo(out);
         }},
-        {4, "Filtrar película por género (exacto)", [&]{
-            const auto gen = readStr("Género (exacto): ");
+        {4, "Filtrar pelicula por genero (exacto)", [&]{
+            const auto gen = readStr("Genero (exacto): ");
             store.listMoviesByGenre(gen);
         }},
     });
@@ -294,14 +294,14 @@ void administrate_products(Store& store, TransactionService& tx) {
             Product* p = chooseProduct(store);
             if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; return; }
             int qty = readValue<int>("Cantidad: ");
-            std::cout << (tx.giveBack(*p, *c, qty) ? "Devolución OK.\n" : "Devolución rechazada.\n");
+            std::cout << (tx.giveBack(*p, *c, qty) ? "Devolucion OK.\n" : "Devolucion rechazada.\n");
         }},
         {5, "Actualizar precio de un producto", [&]{
             Product* p = chooseProduct(store);        // Alternativa: pedir ID directo
             if (!p) { std::cout << "Producto no elegido.\n"; return; }
             float nuevo = readValue<float>("Nuevo precio: ");
             bool ok = store.updateProductPrice(p->getId(), nuevo);
-            std::cout << (ok ? "✅ Precio actualizado.\n" : "❌ No se pudo actualizar el precio.\n");
+            std::cout << (ok ? "Precio actualizado.\n" : "No se pudo actualizar el precio.\n");
         }},
     });
 }
@@ -336,6 +336,6 @@ int main() {
     try { store.saveToDisk(); }
     catch (const std::exception& e) { std::cerr << "[save] Error: " << e.what() << "\n"; }
 
-    std::cout << "Adiós!\n";
+    std::cout << "Adios!\n";
     return 0;
 }
