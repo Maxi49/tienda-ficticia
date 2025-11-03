@@ -24,7 +24,7 @@ El objetivo del proyecto es modelar un sistema de stock y operaciones típico de
 
 ## Estructura del Proyecto
 
-
+```
 .
 ├── db/                     # Bases de datos locales en formato JSON
 │   ├── clients.json
@@ -67,7 +67,7 @@ El objetivo del proyecto es modelar un sistema de stock y operaciones típico de
 ├── CMakeLists.txt          # Configuración de build (opcional)
 └── .gitignore
 
-
+```
 
 ## Principales Componentes
 
