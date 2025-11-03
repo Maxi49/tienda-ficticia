@@ -68,3 +68,4 @@ Movie Movie::from_json(const json& j) {
     m.durationMin = j.value("durationMin", 0);
     return m;
 }
+

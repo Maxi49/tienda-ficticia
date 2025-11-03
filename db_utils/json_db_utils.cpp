@@ -74,10 +74,14 @@ void JSON_DB::load_() {
     // Abre el archivo JSON según la ruta que se guardó en file_path_
     std::ifstream input(file_path_);
 
+    std::cout << file_path_ << std::endl;
+
     // Si el archivo no existe o no se puede abrir, se crea una base nueva en blanco
     if (!input.is_open()) {
       std::cerr << "[JSON_DB::load_] Archivo no encontrado. Se creará uno nuevo.\n";
       data_ = json::array();
+
+      std::cout << data_ << std::endl;
       return;
     }
     // Intenta leer y parsear el contenido del archivo
@@ -124,6 +128,8 @@ bool JSON_DB::save_() {
     if (!parent.empty()) {
       std::error_code ec;
       std::filesystem::create_directories(parent, ec); // crea "db/" si no existe
+
+      std::cout << parent.string() << "\n" << std::endl;
       if (ec) {
         std::cerr << "[JSON_DB::save_] No se pudo crear el directorio "
                   << parent.string() << ": " << ec.message() << "\n";

@@ -10,6 +10,25 @@
 #include "products/game.h"
 #include "products/movie.h"
 #include "client.h"
+#include "templates.h"
+
+struct MovieInput {
+    std::string name, genre, description, director;
+    float price;
+    int stock, duration;
+};
+
+
+struct GameInput {
+    std::string name, genre, description, platform, players;
+    float price;
+    int stock;
+};
+
+struct ClientInput {
+    std::string name;
+};
+
 
 /*
     Clase Store
@@ -89,4 +108,12 @@ public:
 
     // Muestra las transacciones registradas de un cliente
     void printClientTransactions(int clientId) const;
+
+    MovieInput readMovieInput();
+
+    GameInput readGameInput();
+
+    ClientInput readClientInput();
+
+
 };

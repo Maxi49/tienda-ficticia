@@ -6,6 +6,7 @@
 
 using nlohmann::json;
 
+
 // ------------------------------------------------------------
 // Helpers privados (impl.)
 // ------------------------------------------------------------
@@ -442,4 +443,33 @@ bool Store::upsert(const Product& p) {
         std::cerr << "[Store::upsert] Error: " << e.what() << "\n";
         return false;
     }
+}
+
+MovieInput Store::readMovieInput() {
+    return  {
+        readValue<std::string>("name: "),
+        readValue<std::string>("genero: "),
+        readValue<std::string>("description: "),
+        readValue<std::string>("director: "),
+        readValue<float>("price: "),
+        readValue<int>("totalStock: "),
+        readValue<int>("durationMin: ")
+    };
+};
+
+GameInput Store::readGameInput() {
+    return  {
+        readValue<std::string>("name: "),
+        readValue<std::string>("genero: "),
+        readValue<std::string>("description: "),
+        readValue<std::string>("platform: "),
+        readValue<std::string>("players: "),
+        readValue<float>("price: "),
+        readValue<int>("stock: ")
+    };
+};
+
+ClientInput Store::readClientInput() {
+    return {readValue<std::string>("name: ") };
+
 }

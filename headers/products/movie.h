@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 #include "products.h"
 #include "single_include/nlohmann/json.hpp"
@@ -51,4 +50,5 @@ public:
 
     // Muestra por consola la información completa (usa operator<< de Product +  campos de pelicula)
     void showInfo() const override;
+
 };
