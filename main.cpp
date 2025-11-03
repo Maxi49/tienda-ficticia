@@ -47,6 +47,53 @@ Product* chooseProduct(Store& store) {
     return matches[sel - 1];
 }
 
+
+struct MenuItem {
+    int key;
+    std::string label;
+    std::function<void()> action;
+};
+
+inline void print_menu(const std::string& title,
+                       const std::vector<MenuItem>& items,
+                       int exitKey,
+                       const std::string& exitLabel)
+{
+    std::cout << "\n=== " << title << " ===\n";
+    for (const auto& it : items) {
+        std::cout << it.key << ") " << it.label << '\n';
+    }
+    std::cout << exitKey << ") " << exitLabel << '\n';
+}
+
+// corre un loop hasta que el user elija exitKey
+inline void run_menu_loop(const std::string& title,
+                          std::vector<MenuItem> items,
+                          int exitKey = 0,
+                          std::string exitLabel = "Salir")
+{
+    for (;;) {
+        print_menu(title, items, exitKey, exitLabel);
+        int op = readInt("Opción: ");
+
+        if (op == exitKey) break;
+
+        bool dispatched = false;
+        for (auto& it : items) {
+            if (it.key == op) {
+                try {
+                    it.action();
+                } catch (const std::exception& e) {
+                    std::cerr << "[menu:" << title << "] Error: " << e.what() << "\n";
+                }
+                dispatched = true;
+                break;
+            }
+        }
+        if (!dispatched) std::cout << "⚠️ Opción inválida.\n";
+    }
+}
+
 void administrate_games(Store& store) {
     std::cout << "1) Mostrar juegos" << std::endl;
     std::cout << "2) Añadir  juego" << std::endl;
