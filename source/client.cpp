@@ -14,7 +14,7 @@ void Client::showInfo() const {
               << std::endl;
 }
 
-//MEetodos de alquilers
+//Metodos de alquilers
 bool Client::addRental(int productId, int qty) {
     // Validaciones mínimas para evitar estados inválidos:
     if (productId <= 0 || qty <= 0) {

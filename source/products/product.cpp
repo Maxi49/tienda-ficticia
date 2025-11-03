@@ -24,6 +24,7 @@ bool Product::canRent(int amountReq) const {
     return amountReq > 0 && availableStock >= amountReq;
 }
 
+// Alquila productos a un cliente
 bool Product::applyRent(const std::string& client_id, int amountReq) {
     if (!canRent(amountReq)) return false;
     availableStock -= amountReq;
@@ -32,6 +33,7 @@ bool Product::applyRent(const std::string& client_id, int amountReq) {
     return true;
 }
 
+// Devuelve productos alquilados por un cliente
 bool Product::applyReturn(const std::string& client_id, int amountReq) {
     if (amountReq <= 0) return false;
     auto it = activeRentals.find(client_id);

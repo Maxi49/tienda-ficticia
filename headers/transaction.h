@@ -8,6 +8,14 @@ using json = nlohmann::json;
 #include "../db_utils/json_db_utils.h"
 #include "../db_utils/db_enum_aliases.h"
 
+/*
+    Clase Transaction
+    Es una clase de metodos para gestionar las transacciones de alquiler y devolución.
+
+    Administra las bases de datos JSON relacionadas con las transacciones.
+    Registra cada acción de alquiler o devolución en db/transactions.json.
+*/
+
 class TransactionService {
 public:
     explicit TransactionService(Store& store);

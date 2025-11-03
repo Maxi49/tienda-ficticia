@@ -1,16 +1,16 @@
 #include "../headers/transaction.h"
 using json = nlohmann::json;
-
+// Constructor
 TransactionService::TransactionService(Store& s)
     : transactions_db_(Alias::Transactions),
       store_(s) {}
-
+// Genera el próximo ID de transacción
 std::string TransactionService::next_id() const {
     const auto& all = transactions_db_.all();
     const std::size_t n = all.is_array() ? all.size() : 0;
     return std::to_string(n + 1);
 }
-
+// Agrega un registro de transacción (alquiler o devolución)
 bool TransactionService::add_transaction_record_(
     const std::string& action,
     const Product& product,
@@ -33,7 +33,7 @@ bool TransactionService::add_transaction_record_(
     };
     return transactions_db_.insert(std::move(record));
 }
-
+// Realiza el alquiler de un producto a un cliente
 bool TransactionService::rent(Product& product, Client& client, int qty) {
     if (qty <= 0) return false;
     if (!product.canRent(qty)) return false;
@@ -58,6 +58,7 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
     return true;
 }
 
+// Realiza la devolución de un producto por parte de un cliente
 bool TransactionService::giveBack(Product& product, Client& client, int qty) {
     if (qty <= 0) return false;
 
