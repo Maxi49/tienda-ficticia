@@ -190,12 +190,4 @@ Cada archivo se gestiona a través de la clase `JSON_DB`, que garantiza:
 * **Diseño modular:**
   La separación en carpetas por responsabilidad facilita la extensión y mantenimiento del sistema.
 
----
-
-## Créditos y Autoría
-
-Proyecto desarrollado como trabajo académico para Ingeniería Informática.
-Desarrollo colaborativo del equipo, con integración y documentación final a cargo de **Maximiliano Giménez**.
-
-
 
