@@ -135,7 +135,7 @@ inline void run_menu_loop(const std::string& title,
 {
     for (;;) {
         print_menu(title, items, exitKey, exitLabel);
-        int op = readInt("Opción: ");
+        int op = readInt("Opcion: ");
 
         if (op == exitKey) break;
 
