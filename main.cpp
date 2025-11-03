@@ -47,252 +47,161 @@ Product* chooseProduct(Store& store) {
     return matches[sel - 1];
 }
 
-void administrate_games(Store& store) {
-    std::cout << "1) Mostrar juegos" << std::endl;
-    std::cout << "2) Añadir  juego" << std::endl;
-    std::cout << "3) Buscar juego" << std::endl;
-    std::cout << "0) Salir" << std::endl;
-    const int option = readInt("Operation: ");
 
+struct MenuItem {
+    int key;
+    std::string label;
+    std::function<void()> action;
+};
 
-    std::map<int, std::function<void()>> actions;
-
-    actions[1] = [&]() {
-        store.listGames();
-    };
-
-    actions[2] = [&]() {
-        GameInput g = store.readGameInput();
-
-        auto& [name, genre, description, platform, players, price, stock] = g;
-
-        const int id = store.addGame(name, genre, description, price, stock, platform, players);
-        std::cout << (id >= 0
-            ? "✅ Juego agregada con ID " + std::to_string(id) + ".\n"
-            : "❌ Error al agregar.\n");
-    };
-
-    actions[3] = [&]() {
-        const auto name = readStr("Nombre a buscar: ");
-        const std::vector<Product *> out = store.findProductsByName(name);
-        showVectorInfo(out);
-    };
-
-    actions[4] = [&]() {
-        const auto gen = readStr("Género (exacto): ");
-        store.listGamesByGenre(gen);
-    };
-
-    actions[0] = [&]() {};
-
-    if (const auto it = actions.find(option); it != actions.end()) {
-        it->second();  // ejecuta la acción correspondiente
-    } else {
-        std::cout << "⚠️ Opción inválida.\n";
+inline void print_menu(const std::string& title,
+                       const std::vector<MenuItem>& items,
+                       int exitKey,
+                       const std::string& exitLabel)
+{
+    std::cout << "\n=== " << title << " ===\n";
+    for (const auto& it : items) {
+        std::cout << it.key << ") " << it.label << '\n';
     }
+    std::cout << exitKey << ") " << exitLabel << '\n';
+}
+
+// corre un loop hasta que el user elija exitKey
+inline void run_menu_loop(const std::string& title,
+                          std::vector<MenuItem> items,
+                          int exitKey = 0,
+                          std::string exitLabel = "Salir")
+{
+    for (;;) {
+        print_menu(title, items, exitKey, exitLabel);
+        int op = readInt("Opción: ");
+
+        if (op == exitKey) break;
+
+        bool dispatched = false;
+        for (auto& it : items) {
+            if (it.key == op) {
+                try {
+                    it.action();
+                } catch (const std::exception& e) {
+                    std::cerr << "[menu:" << title << "] Error: " << e.what() << "\n";
+                }
+                dispatched = true;
+                break;
+            }
+        }
+        if (!dispatched) std::cout << "⚠️ Opción inválida.\n";
+    }
+}
+
+void administrate_games(Store& store) {
+    run_menu_loop("Administrar Juegos", {
+        {1, "Mostrar juegos", [&]{ store.listGames(); }},
+        {2, "Añadir juego",   [&]{
+            GameInput g = store.readGameInput();
+            auto& [name, genre, description, platform, players, price, stock] = g;
+            const int id = store.addGame(name, genre, description, price, stock, platform, players);
+            std::cout << (id >= 0
+                ? "✅ Juego agregado con ID " + std::to_string(id) + ".\n"
+                : "❌ Error al agregar.\n");
+        }},
+        {3, "Buscar juego (por nombre)", [&]{
+            const auto name = readStr("Nombre a buscar: ");
+            const std::vector<Product*> out = store.findProductsByName(name);
+            showVectorInfo(out);
+        }},
+        {4, "Filtrar juego por género (exacto)", [&]{
+            const auto gen = readStr("Género (exacto): ");
+            store.listGamesByGenre(gen);
+        }},
+    });
 }
 
 void administrate_clients(Store& store) {
-    std::cout << "1) Mostrar Clientes" << std::endl;
-    std::cout << "2) Crear Cliente" << std::endl;
-    std::cout << "3) Ver historial del cliente" << std::endl;
-    std::cout << "0) Salir" << std::endl;
-    const int option = readInt("Operation: ");
-
-
-    std::map<int, std::function<void()>> actions;
-
-    actions[1] = [&]() {
-        store.listClients();
-    };
-
-    actions[2] = [&]() {
-        ClientInput c = store.readClientInput();
-
-        auto& [name] = c;
-
-        const int id = store.addClient(name);
-        std::cout << (id >= 0
-            ? "✅ Movie agregada con ID " + std::to_string(id) + ".\n"
-            : "❌ Error al agregar.\n");
-    };
-
-
-    actions[3] = [&]() {
-        Client* c = chooseClient(store);
-        if (!c) { std::cout << "Cliente no encontrado.\n"; }
-        std::cout << "\nHistorial de " << c->getName()
-                  << " (id=" << c->getId() << "):\n";
-        store.printClientTransactions(c->getId()); // ✅
-    };
-
-    actions[0] = [&]() {};
-
-    if (const auto it = actions.find(option); it != actions.end()) {
-        it->second();  // ejecuta la acción correspondiente
-    } else {
-        std::cout << "⚠️ Opción inválida.\n";
-    }
-
+    run_menu_loop("Administrar Clientes", {
+        {1, "Mostrar clientes", [&]{ store.listClients(); }},
+        {2, "Crear cliente",    [&]{
+            ClientInput c = store.readClientInput();
+            auto& [name] = c;
+            const int id = store.addClient(name);
+            std::cout << (id >= 0
+                ? "✅ Cliente creado con ID " + std::to_string(id) + ".\n"
+                : "❌ Error al crear cliente.\n");
+        }},
+        {3, "Ver historial de un cliente", [&]{
+            Client* c = chooseClient(store);
+            if (!c) { std::cout << "Cliente no encontrado.\n"; return; }
+            std::cout << "\nHistorial de " << c->getName()
+                      << " (id=" << c->getId() << "):\n";
+            store.printClientTransactions(c->getId());
+        }},
+    });
 }
 
 void administrate_movies(Store& store) {
-    std::cout << "1) Mostrar peliculas" << std::endl;
-    std::cout << "2) Añadir  pelicula" << std::endl;
-    std::cout << "3) Buscar pelicula" << std::endl;
-    std::cout << "3) Filtrar pelicula por genero" << std::endl;
-    std::cout << "0) Salir" << std::endl;
-    const int option = readInt("Operation: ");
-
-
-    std::map<int, std::function<void()>> actions;
-
-    actions[1] = [&]() {
-        store.listMovies();
-    };
-
-    actions[2] = [&]() {
-        MovieInput m = store.readMovieInput();
-
-        auto& [name, genre, description, director, price, stock, duration] = m;
-
-        const int id = store.addMovie(name, genre, description, price, stock, director, duration);
-        std::cout << (id >= 0
-            ? "✅ Movie agregada con ID " + std::to_string(id) + ".\n"
-            : "❌ Error al agregar.\n");
-    };
-
-    actions[3] = [&]() {
-        const auto name = readStr("Nombre a buscar: ");
-        const std::vector<Product *> out = store.findProductsByName(name);
-        showVectorInfo(out);
-    };
-
-    actions[4] = [&]() {
-        const auto gen = readStr("Género (exacto): ");
-        store.listMoviesByGenre(gen); // ✅
-    };
-
-    actions[0] = [&]() {};
-
-    if (const auto it = actions.find(option); it != actions.end()) {
-        it->second();  // ejecuta la acción correspondiente
-    } else {
-        std::cout << "⚠️ Opción inválida.\n";
-    }
+    run_menu_loop("Administrar Películas", {
+        {1, "Mostrar películas", [&]{ store.listMovies(); }},
+        {2, "Añadir película",   [&]{
+            MovieInput m = store.readMovieInput();
+            auto& [name, genre, description, director, price, stock, duration] = m;
+            const int id = store.addMovie(name, genre, description, price, stock, director, duration);
+            std::cout << (id >= 0
+                ? "✅ Película agregada con ID " + std::to_string(id) + ".\n"
+                : "❌ Error al agregar.\n");
+        }},
+        {3, "Buscar película (por nombre)", [&]{
+            const auto name = readStr("Nombre a buscar: ");
+            const std::vector<Product*> out = store.findProductsByName(name);
+            showVectorInfo(out);
+        }},
+        {4, "Filtrar película por género (exacto)", [&]{
+            const auto gen = readStr("Género (exacto): ");
+            store.listMoviesByGenre(gen);
+        }},
+    });
 }
-
 
 void administrate_products(Store& store, TransactionService& tx) {
-    std::cout << "1) Listar todos los productos" << std::endl;
-    std::cout << "2) Buscar producto" << std::endl;
-    std::cout << "3) Alquilar producto" << std::endl;
-    std::cout << "4) Devolver producto" << std::endl;
-    std::cout << "0) Salir" << std::endl;
-
-    const int option = readInt("Operation: ");
-
-    std::map<int, std::function<void()>> actions;
-
-    actions[1] = [&]() {
-        store.listProducts();
-    };
-
-    actions[2] = [&] () {
-        const Product* result = chooseProduct(store);
-
-        std::cout << result << std::endl;
-    };
-
-    actions[3] = [&]() {
-        Client*  c = chooseClient(store);
-        Product* p = chooseProduct(store);
-        if (!c || !p) {
-            std::cout << "No se pudo resolver cliente/producto.\n" << std::endl;
-            return;
-        };
-
-        int qty = readInt("Cantidad: ");
-        std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
-    };
-
-    actions[4] = [&]() {
-        Client*  c = chooseClient(store);
-        Product* p = chooseProduct(store);
-        if (!c || !p) {
-            std::cout << "No se pudo resolver cliente/producto.\n";
-            return;
-        }
-        int qty = readInt("Cantidad: ");
-        std::cout << (tx.giveBack(*p, *c, qty) ? "Devolución OK.\n" : "Devolución rechazada.\n");
-    };
-
-    actions[0] = [&]() {};
-
-    if (const auto it = actions.find(option); it != actions.end()) {
-        it->second();  // ejecuta la acción correspondiente
-    } else {
-        std::cout << "⚠️ Opción inválida.\n";
-    }
+    run_menu_loop("Administrar Productos", {
+        {1, "Listar todos los productos", [&]{ store.listProducts(); }},
+        {2, "Buscar producto (seleccionar)", [&]{
+            const Product* p = chooseProduct(store);
+            std::cout << p << '\n';
+        }},
+        {3, "Alquilar producto", [&]{
+            Client*  c = chooseClient(store);
+            Product* p = chooseProduct(store);
+            if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; return; }
+            int qty = readInt("Cantidad: ");
+            std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
+        }},
+        {4, "Devolver producto", [&]{
+            Client*  c = chooseClient(store);
+            Product* p = chooseProduct(store);
+            if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; return; }
+            int qty = readInt("Cantidad: ");
+            std::cout << (tx.giveBack(*p, *c, qty) ? "Devolución OK.\n" : "Devolución rechazada.\n");
+        }},
+    });
 }
-
 
 int main() {
     Store store;
-    store.loadFromDisk();            // ✅ nombre actualizado
+    store.loadFromDisk();
     TransactionService tx(store);
 
-    /*
-     * ADMINISTRAR PRODUCTOS
-     * ADMINISTRAR PELICULAS
-     * ADMINISTRAR JUEGOS
-     * ADMINISTRAR CLIENTES
-     */
+    run_menu_loop("MENU PRINCIPAL", {
+        {1, "Administrar Productos",  [&]{ administrate_products(store, tx); }},
+        {2, "Administrar Películas",  [&]{ administrate_movies(store); }},
+        {3, "Administrar Juegos",     [&]{ administrate_games(store); }},
+        {4, "Administrar Clientes",   [&]{ administrate_clients(store); }},
+    }, /*exitKey*/0, /*exitLabel*/"Salir (guardar)");
 
-    for (;;) {
-        std::cout <<
-          "\n=== MENU ===\n"
-          "1) Administrar Productos \n"
-          "2) Administrar Peliculas \n"
-          "3) Administrar Juegos \n"
-          "4) Administrar Clientes \n"
-          "0) Salir (guardar)\n";
-
-        int op = readInt("Opción: ");
-        if (op == 0) {
-            try {
-                store.saveToDisk();   // ✅ nombre actualizado
-            } catch (const std::exception& e) {
-                std::cerr << "[save] Error: " << e.what() << "\n";
-            }
-            std::cout << "Adiós!\n";
-            break;
-        }
-
-        try {
-            switch (op) {
-            case 1:
-                administrate_products(store, tx);
-                break;
-            case 2: { // Alta juego
-                administrate_movies(store);
-                break;
-            }
-            case 3: { // Alta cliente
-                administrate_games(store);
-                break;
-            }
-            case 4: { // Alta cliente
-                administrate_clients(store);
-                break;
-            }
-            default:
-                std::cout << "Opción inválida.\n";
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "[menu] Error: " << e.what() << "\n";
-        }
+    try {
+        store.saveToDisk();
+    } catch (const std::exception& e) {
+        std::cerr << "[save] Error: " << e.what() << "\n";
     }
-
+    std::cout << "Adiós!\n";
     return 0;
 }
