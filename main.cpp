@@ -4,8 +4,8 @@
 #include <vector>
 #include "headers/store.h"
 #include "headers/transaction.h"
-#include "read_inputs.h"
-#include "templates.h"
+#include "utils/read_inputs.h"
+#include "utils/templates.h"
 
 /**
  * @brief Selecciona un cliente por ID numérico o por nombre (con coincidencia parcial).
