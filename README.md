@@ -1,11 +1,4 @@
 # Trabajo practico OOP: Tienda Ficticia
-
-Perfecto, Maxi. Con toda la estructura que me pasaste y el contexto del proyecto, te dejo un **README.md** profesional y completo, pensado para subir al repositorio de tu proyecto (por ejemplo en GitHub o GitLab).
-Está escrito en formato Markdown, serio y claro, siguiendo estándares de documentación técnica.
-
-
-# Tienda Multimedia – Sistema de Gestión en C++
-
 ## Descripción General
 
 Este proyecto implementa un **sistema de gestión de una tienda multimedia** desarrollado en C++17.  
@@ -13,7 +6,7 @@ Permite administrar de forma unificada el catálogo de productos (películas y v
 El almacenamiento se realiza en formato **JSON persistente**, utilizando la librería `nlohmann/json` integrada en el proyecto.
 
 El programa se ejecuta completamente en consola, con un menú interactivo para navegar entre las distintas secciones:
-- Administración de productos (listado, búsqueda, alquiler, devolución, actualización de precios).
+- Administración de productos.
 - Administración de películas.
 - Administración de videojuegos.
 - Administración de clientes.
@@ -120,7 +113,7 @@ Clase principal que gestiona:
 
 Desde la raíz del proyecto, ejecutar el siguiente comando:
 ````
-```bash
+```
 g++ -std=c++17 \
     -I"./headers" \
     -I"./db_utils" \
@@ -137,7 +130,7 @@ g++ -std=c++17 \
 
 Luego, ejecutar el programa:
 
-```bash
+```
 ./tienda.exe
 ```
 
