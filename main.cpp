@@ -4,8 +4,8 @@
 #include <vector>
 #include "headers/store.h"
 #include "headers/transaction.h"
-#include "read_inputs.h"
-#include "templates.h"
+#include "utils/read_inputs.h"
+#include "utils/templates.h"
 
 // ---- Resolver cliente/producto (por ID o nombre) ----
 Client* chooseClient(Store& store) {
@@ -68,8 +68,8 @@ void administrate_games(Store& store) {
 
         const int id = store.addGame(name, genre, description, price, stock, platform, players);
         std::cout << (id >= 0
-            ? "✅ Juego agregada con ID " + std::to_string(id) + ".\n"
-            : "❌ Error al agregar.\n");
+            ? " Juego agregada con ID " + std::to_string(id) + ".\n"
+            : "Error al agregar.\n");
     };
 
     actions[3] = [&]() {
@@ -88,7 +88,7 @@ void administrate_games(Store& store) {
     if (const auto it = actions.find(option); it != actions.end()) {
         it->second();  // ejecuta la acción correspondiente
     } else {
-        std::cout << "⚠️ Opción inválida.\n";
+        std::cout << " Opción inválida.\n";
     }
 }
 
@@ -113,8 +113,8 @@ void administrate_clients(Store& store) {
 
         const int id = store.addClient(name);
         std::cout << (id >= 0
-            ? "✅ Movie agregada con ID " + std::to_string(id) + ".\n"
-            : "❌ Error al agregar.\n");
+            ? " Movie agregada con ID " + std::to_string(id) + ".\n"
+            : " Error al agregar.\n");
     };
 
 
@@ -123,7 +123,7 @@ void administrate_clients(Store& store) {
         if (!c) { std::cout << "Cliente no encontrado.\n"; }
         std::cout << "\nHistorial de " << c->getName()
                   << " (id=" << c->getId() << "):\n";
-        store.printClientTransactions(c->getId()); // ✅
+        store.printClientTransactions(c->getId()); 
     };
 
     actions[0] = [&]() {};
@@ -131,7 +131,7 @@ void administrate_clients(Store& store) {
     if (const auto it = actions.find(option); it != actions.end()) {
         it->second();  // ejecuta la acción correspondiente
     } else {
-        std::cout << "⚠️ Opción inválida.\n";
+        std::cout << " Opción inválida.\n";
     }
 
 }
@@ -158,8 +158,8 @@ void administrate_movies(Store& store) {
 
         const int id = store.addMovie(name, genre, description, price, stock, director, duration);
         std::cout << (id >= 0
-            ? "✅ Movie agregada con ID " + std::to_string(id) + ".\n"
-            : "❌ Error al agregar.\n");
+            ? "Movie agregada con ID " + std::to_string(id) + ".\n"
+            : "Error al agregar.\n");
     };
 
     actions[3] = [&]() {
@@ -170,7 +170,7 @@ void administrate_movies(Store& store) {
 
     actions[4] = [&]() {
         const auto gen = readStr("Género (exacto): ");
-        store.listMoviesByGenre(gen); // ✅
+        store.listMoviesByGenre(gen); 
     };
 
     actions[0] = [&]() {};
@@ -178,7 +178,7 @@ void administrate_movies(Store& store) {
     if (const auto it = actions.find(option); it != actions.end()) {
         it->second();  // ejecuta la acción correspondiente
     } else {
-        std::cout << "⚠️ Opción inválida.\n";
+        std::cout << " Opción inválida.\n";
     }
 }
 
@@ -232,14 +232,14 @@ void administrate_products(Store& store, TransactionService& tx) {
     if (const auto it = actions.find(option); it != actions.end()) {
         it->second();  // ejecuta la acción correspondiente
     } else {
-        std::cout << "⚠️ Opción inválida.\n";
+        std::cout << " Opción inválida.\n";
     }
 }
 
 
 int main() {
     Store store;
-    store.loadFromDisk();            // ✅ nombre actualizado
+    store.loadFromDisk();           
     TransactionService tx(store);
 
     /*
@@ -261,7 +261,7 @@ int main() {
         int op = readInt("Opción: ");
         if (op == 0) {
             try {
-                store.saveToDisk();   // ✅ nombre actualizado
+                store.saveToDisk();   
             } catch (const std::exception& e) {
                 std::cerr << "[save] Error: " << e.what() << "\n";
             }

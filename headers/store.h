@@ -10,7 +10,7 @@
 #include "products/game.h"
 #include "products/movie.h"
 #include "client.h"
-#include "templates.h"
+#include "../utils/templates.h"
 
 struct MovieInput {
     std::string name, genre, description, director;
