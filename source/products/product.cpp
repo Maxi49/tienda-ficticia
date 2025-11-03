@@ -1,7 +1,7 @@
 #include "../../headers/products/products.h"
-#include <iostream>   // std::cout, std::endl
+#include <iostream>  
 
-// Constructor (igual al tuyo)
+// Constructor
 Product::Product(
     int id,
     const std::string& name,
