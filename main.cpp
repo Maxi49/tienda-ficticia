@@ -151,7 +151,7 @@ inline void run_menu_loop(const std::string& title,
                 break;
             }
         }
-        if (!dispatched) std::cout << "⚠️ Opción inválida.\n";
+        if (!dispatched) std::cout << " Opción inválida.\n";
     }
 }
 
@@ -177,8 +177,8 @@ void administrate_games(Store& store) {
             auto& [name, genre, description, platform, players, price, stock] = g;
             const int id = store.addGame(name, genre, description, price, stock, platform, players);
             std::cout << (id >= 0
-                ? "✅ Juego agregado con ID " + std::to_string(id) + ".\n"
-                : "❌ Error al agregar.\n");
+                ? "Juego agregado con ID " + std::to_string(id) + ".\n"
+                : " Error al agregar.\n");
         }},
         {3, "Buscar juego (por nombre)", [&]{
             const auto name = readStr("Nombre a buscar: ");
@@ -212,8 +212,8 @@ void administrate_clients(Store& store) {
             auto& [name] = c;
             const int id = store.addClient(name);
             std::cout << (id >= 0
-                ? "✅ Cliente creado con ID " + std::to_string(id) + ".\n"
-                : "❌ Error al crear cliente.\n");
+                ? "Cliente creado con ID " + std::to_string(id) + ".\n"
+                : " Error al crear cliente.\n");
         }},
         {3, "Ver historial de un cliente", [&]{
             Client* c = chooseClient(store);
@@ -244,8 +244,8 @@ void administrate_movies(Store& store) {
             auto& [name, genre, description, director, price, stock, duration] = m;
             const int id = store.addMovie(name, genre, description, price, stock, director, duration);
             std::cout << (id >= 0
-                ? "✅ Película agregada con ID " + std::to_string(id) + ".\n"
-                : "❌ Error al agregar.\n");
+                ? "Película agregada con ID " + std::to_string(id) + ".\n"
+                : "Error al agregar.\n");
         }},
         {3, "Buscar película (por nombre)", [&]{
             const auto name = readStr("Nombre a buscar: ");
@@ -301,7 +301,7 @@ void administrate_products(Store& store, TransactionService& tx) {
             if (!p) { std::cout << "Producto no elegido.\n"; return; }
             float nuevo = readValue<float>("Nuevo precio: ");
             bool ok = store.updateProductPrice(p->getId(), nuevo);
-            std::cout << (ok ? "✅ Precio actualizado.\n" : "❌ No se pudo actualizar el precio.\n");
+            std::cout << (ok ? " Precio actualizado.\n" : " No se pudo actualizar el precio.\n");
         }},
     });
 }
