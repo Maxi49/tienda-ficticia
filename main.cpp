@@ -328,7 +328,7 @@ int main() {
 
     run_menu_loop("MENU PRINCIPAL", {
         {1, "Administrar Productos",  [&]{ administrate_products(store, tx); }},
-        {2, "Administrar Películas",  [&]{ administrate_movies(store); }},
+        {2, "Administrar Peliculas",  [&]{ administrate_movies(store); }},
         {3, "Administrar Juegos",     [&]{ administrate_games(store); }},
         {4, "Administrar Clientes",   [&]{ administrate_clients(store); }},
     }, /*exitKey*/0, /*exitLabel*/"Salir (guardar)");
