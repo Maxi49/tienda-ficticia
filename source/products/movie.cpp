@@ -1,5 +1,6 @@
 #include "../../headers/products/movie.h"
 #include <iostream>
+using nlohmann::json;
 
 // Constructor
 Movie::Movie(int id,
@@ -14,22 +15,14 @@ Movie::Movie(int id,
       director(director),
       durationMin(durationMin) {}
 
-// Destructor
-Movie::~Movie() {}
-
-// Constructor de copia
 Movie::Movie(const Movie& other)
-    : Product(other), // copia la parte base
+    : Product(other),
       director(other.director),
       durationMin(other.durationMin) {}
 
-// Operador de asignación por copia
 Movie& Movie::operator=(const Movie& other) {
     if (this != &other) {
-        // Asignar la parte base (usa el operator= implícito de Product)
         Product::operator=(other);
-
-        // Asignar los campos propios
         director    = other.director;
         durationMin = other.durationMin;
     }
@@ -58,6 +51,7 @@ void Movie::showInfo() const {
               << std::endl;
 }
 
+// Serialización
 json Movie::to_json() const {
     json j = base_json_();
     j["type"]        = "movie";
@@ -66,25 +60,11 @@ json Movie::to_json() const {
     return j;
 }
 
+// Deserialización
 Movie Movie::from_json(const json& j) {
-    // 1) Construimos un Movie “vacío” (valores neutros)
-    Movie m(
-        /*id*/           0,
-        /*name*/         "",
-        /*genero*/       "",
-        /*description*/  "",
-        /*price*/        0.0f,
-        /*totalStock*/   0,
-        /*director*/     "",
-        /*durationMin*/  0
-    );
-
-    // 2) Cargamos el BLOQUE BASE con la inversa del base_json_()
+    Movie m(0, "", "", "", 0.0f, 0, "", 0);
     Product::from_json_base(m, j);
-
-    // 3) Cargamos SOLO los campos propios de Movie (simétrico a tu to_json)
     m.director    = j.value("director", "");
     m.durationMin = j.value("durationMin", 0);
-
     return m;
 }

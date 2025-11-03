@@ -2,152 +2,199 @@
 #include <limits>
 #include <algorithm>
 #include <cctype>
+#include <vector>
 #include "headers/store.h"
 #include "headers/transaction.h"
 
 // ---- Entradas seguras ----
-int read_int(const char* prompt) {
+int readInt(const char* prompt) {
     int x;
     for (;;) {
         std::cout << prompt;
         if (std::cin >> x) return x;
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Entrada invalida.\n";
+        std::cout << "Entrada inválida.\n";
     }
 }
-float read_float(const char* prompt) {
+
+float readFloat(const char* prompt) {
     float x;
     for (;;) {
         std::cout << prompt;
         if (std::cin >> x) return x;
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Entrada invalida.\n";
+        std::cout << "Entrada inválida.\n";
     }
 }
-std::string read_str(const char* prompt) {
+
+std::string readStr(const char* prompt) {
     std::cout << prompt;
     std::string s;
     std::getline(std::cin >> std::ws, s);
     return s;
 }
 
-// ---- Resolver cliente/producto por ID o nombre ----
-Client* resolve_client(Store& store) {
-    std::string token = read_str("Cliente (id o nombre): ");
-    bool isnum = !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
-    if (isnum) {
-        int cid = std::stoi(token);
-        return store.find_client(cid);
+// ---- Resolver cliente/producto (por ID o nombre) ----
+Client* chooseClient(Store& store) {
+    std::string token = readStr("Cliente (id o nombre): ");
+    bool isNum = !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
+    if (isNum) return store.findClient(std::stoi(token));
+
+    auto matches = store.findClientsByName(token, true);
+    if (matches.empty()) { std::cout << "Sin coincidencias.\n"; return nullptr; }
+    if (matches.size() == 1) return matches[0];
+
+    std::cout << "Coincidencias:\n";
+    for (size_t i = 0; i < matches.size(); ++i) {
+        std::cout << " [" << i + 1 << "] ID " << matches[i]->getId()
+                  << "  Nombre " << matches[i]->getName() << "\n";
     }
-    return store.find_client_by_name(token);
+    int sel = readInt("Elegir #: ");
+    if (sel < 1 || sel > (int)matches.size()) return nullptr;
+    return matches[sel - 1];
 }
-Product* resolve_product(Store& store) {
-    std::string token = read_str("Producto (id o nombre): ");
-    bool isnum = !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
-    if (isnum) {
-        int pid = std::stoi(token);
-        return store.find_product(pid);
+
+Product* chooseProduct(Store& store) {
+    std::string token = readStr("Producto (id o nombre): ");
+    bool isNum = !token.empty() && std::all_of(token.begin(), token.end(), ::isdigit);
+    if (isNum) return store.findProduct(std::stoi(token));
+
+    auto matches = store.findProductsByName(token, true);
+    if (matches.empty()) { std::cout << "Sin coincidencias.\n"; return nullptr; }
+    if (matches.size() == 1) return matches[0];
+
+    std::cout << "Coincidencias:\n";
+    for (size_t i = 0; i < matches.size(); ++i) {
+        std::cout << " [" << i + 1 << "] ID " << matches[i]->getId()
+                  << "  Nombre " << matches[i]->getName()
+                  << "  Tipo " << matches[i]->type() << "\n";
     }
-    return store.find_product_by_name(token);
+    int sel = readInt("Elegir #: ");
+    if (sel < 1 || sel > (int)matches.size()) return nullptr;
+    return matches[sel - 1];
 }
 
 int main() {
-    // 1) Inicializar servicios
-    Store store;                 // dueño del catálogo en memoria + persistencia
-    store.load_from_disk();      // levanta games/movies/clients desde JSON
-    TransactionService tx(store);// tx usará store para snapshot de productos
+    Store store;
+    store.loadFromDisk();            // ✅ nombre actualizado
+    TransactionService tx(store);
 
-    // 2) Menú de texto
     for (;;) {
         std::cout <<
           "\n=== MENU ===\n"
-          "1) Ver productos\n"
-          "2) Ver clientes (con nombres de alquileres)\n"
-          "3) Agregar videojuego\n"
-          "4) Agregar pelicula\n"
-          "5) Agregar cliente\n"
-          "6) Alquilar (por id o nombre)\n"
-          "7) Devolver (por id o nombre)\n"
-          "8) Ver historial de un cliente\n"
-          "0) Salir (guarda catalogo)\n";
-        int op = read_int("Opcion: ");
+          "1) Ver TODOS los productos\n"
+          "2) Ver SOLO videojuegos\n"
+          "3) Ver SOLO películas\n"
+          "4) Ver clientes\n"
+          "5) Agregar videojuego\n"
+          "6) Agregar película\n"
+          "7) Agregar cliente\n"
+          "8) Alquilar (por id o nombre)\n"
+          "9) Devolver (por id o nombre)\n"
+          "10) Ver historial de un cliente\n"
+          "11) Filtrar videojuegos por género\n"
+          "12) Filtrar películas por género\n"
+          "0) Salir (guardar)\n";
+
+        int op = readInt("Opción: ");
         if (op == 0) {
-            store.save_to_disk(); // snapshot final del catálogo (productos)
-            std::cout << "Adios!\n";
+            try {
+                store.saveToDisk();   // ✅ nombre actualizado
+            } catch (const std::exception& e) {
+                std::cerr << "[save] Error: " << e.what() << "\n";
+            }
+            std::cout << "Adiós!\n";
             break;
         }
 
-        switch (op) {
-        case 1: {
-            store.list_products();
-            break;
-        }
-        case 2: {
-            // Muestra TODOS los clientes; si tienen alquileres, imprime nombres y qty
-            store.list_clients();
-            break;
-        }
-        case 3: { // agregar game
-            int id = read_int("id: ");
-            auto name = read_str("name: ");
-            auto gen  = read_str("genero: ");
-            auto desc = read_str("description: ");
-            float price = read_float("price: ");
-            int stock   = read_int("totalStock: ");
-            auto plat   = read_str("platform: ");
-            auto plays  = read_str("players: ");
-            bool ok = store.add_game(id, name, gen, desc, price, stock, plat, plays);
-            std::cout << (ok ? "Game agregado.\n" : "Error (id duplicado o persistencia).\n");
-            break;
-        }
-        case 4: { // agregar movie
-            int id = read_int("id: ");
-            auto name = read_str("name: ");
-            auto gen  = read_str("genero: ");
-            auto desc = read_str("description: ");
-            float price = read_float("price: ");
-            int stock   = read_int("totalStock: ");
-            auto dir    = read_str("director: ");
-            int dur     = read_int("durationMin: ");
-            bool ok = store.add_movie(id, name, gen, desc, price, stock, dir, dur);
-            std::cout << (ok ? "Movie agregada.\n" : "Error (id duplicado o persistencia).\n");
-            break;
-        }
-        case 5: { // agregar cliente
-            int id = read_int("id: ");
-            auto name = read_str("name: ");
-            bool ok = store.add_client(id, name);
-            std::cout << (ok ? "Cliente agregado.\n" : "Error (id duplicado o persistencia).\n");
-            break;
-        }
-        case 6: { // alquilar (por id o nombre)
-            Client*  c = resolve_client(store);
-            Product* p = resolve_product(store);
-            if (!c || !p) { std::cout << "Cliente o producto no encontrado.\n"; break; }
-            int qty = read_int("Cantidad: ");
-            std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
-            break;
-        }
-        case 7: { // devolver (por id o nombre)
-            Client*  c = resolve_client(store);
-            Product* p = resolve_product(store);
-            if (!c || !p) { std::cout << "Cliente o producto no encontrado.\n"; break; }
-            int qty = read_int("Cantidad: ");
-            std::cout << (tx.giveBack(*p, *c, qty) ? "Devolucion OK.\n" : "Devolucion rechazada.\n");
-            break;
-        }
-        case 8: { // historial
-            Client* c = resolve_client(store);
-            if (!c) { std::cout << "Cliente no encontrado.\n"; break; }
-            std::cout << "\nHistorial de " << c->getName()
-                      << " (id=" << c->getId() << "):\n";
-            store.print_client_transactions(c->getId());
-            break;
-        }
-        default:
-            std::cout << "Opcion invalida.\n";
+        try {
+            switch (op) {
+            case 1:
+                store.listProducts();   // ✅
+                break;
+            case 2:
+                store.listGames();      // ✅
+                break;
+            case 3:
+                store.listMovies();     // ✅
+                break;
+            case 4:
+                store.listClients();    // ✅
+                break;
+            case 5: { // Alta juego
+                auto name = readStr("name: ");
+                auto gen  = readStr("genero: ");
+                auto desc = readStr("description: ");
+                float price = readFloat("price: ");
+                int stock   = readInt("totalStock: ");
+                auto plat   = readStr("platform: ");
+                auto plays  = readStr("players: ");
+                int id = store.addGame(name, gen, desc, price, stock, plat, plays); // ✅
+                std::cout << (id >= 0 ? "Game agregado con ID " + std::to_string(id) + ".\n"
+                                       : "Error al agregar.\n");
+                break;
+            }
+            case 6: { // Alta película
+                auto name = readStr("name: ");
+                auto gen  = readStr("genero: ");
+                auto desc = readStr("description: ");
+                float price = readFloat("price: ");
+                int stock   = readInt("totalStock: ");
+                auto dir    = readStr("director: ");
+                int dur     = readInt("durationMin: ");
+                int id = store.addMovie(name, gen, desc, price, stock, dir, dur); // ✅
+                std::cout << (id >= 0 ? "Movie agregada con ID " + std::to_string(id) + ".\n"
+                                       : "Error al agregar.\n");
+                break;
+            }
+            case 7: { // Alta cliente
+                auto name = readStr("name: ");
+                int id = store.addClient(name); // ✅
+                std::cout << (id >= 0 ? "Cliente agregado con ID " + std::to_string(id) + ".\n"
+                                       : "Error al agregar.\n");
+                break;
+            }
+            case 8: { // Alquilar
+                Client*  c = chooseClient(store);
+                Product* p = chooseProduct(store);
+                if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; break; }
+                int qty = readInt("Cantidad: ");
+                std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
+                break;
+            }
+            case 9: { // Devolver
+                Client*  c = chooseClient(store);
+                Product* p = chooseProduct(store);
+                if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; break; }
+                int qty = readInt("Cantidad: ");
+                std::cout << (tx.giveBack(*p, *c, qty) ? "Devolución OK.\n" : "Devolución rechazada.\n");
+                break;
+            }
+            case 10: { // Historial cliente
+                Client* c = chooseClient(store);
+                if (!c) { std::cout << "Cliente no encontrado.\n"; break; }
+                std::cout << "\nHistorial de " << c->getName()
+                          << " (id=" << c->getId() << "):\n";
+                store.printClientTransactions(c->getId()); // ✅
+                break;
+            }
+            case 11: { // Filtrar juegos
+                auto gen = readStr("Género (exacto): ");
+                store.listGamesByGenre(gen); // ✅
+                break;
+            }
+            case 12: { // Filtrar películas
+                auto gen = readStr("Género (exacto): ");
+                store.listMoviesByGenre(gen); // ✅
+                break;
+            }
+            default:
+                std::cout << "Opción inválida.\n";
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[menu] Error: " << e.what() << "\n";
         }
     }
 

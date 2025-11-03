@@ -1,5 +1,6 @@
 #include "../../headers/products/game.h"
 #include <iostream>
+using nlohmann::json;
 
 // Constructor
 Game::Game(
@@ -15,22 +16,16 @@ Game::Game(
       platform(platform),
       players(players) {}
 
-// Destructor
-Game::~Game() {}
-
 // Constructor de copia
 Game::Game(const Game& other)
-    : Product(other), // copia la parte base
+    : Product(other),
       platform(other.platform),
       players(other.players) {}
 
-// Operador de asignación por copia
+// Operador de asignación
 Game& Game::operator=(const Game& other) {
     if (this != &other) {
-        // Copiar la parte base
         Product::operator=(other);
-
-        // Copiar los miembros propios
         platform = other.platform;
         players  = other.players;
     }
@@ -60,6 +55,7 @@ void Game::showInfo() const {
               << std::endl;
 }
 
+// Serialización
 json Game::to_json() const {
     json j = base_json_();
     j["type"]     = "game";
@@ -68,22 +64,11 @@ json Game::to_json() const {
     return j;
 }
 
+// Deserialización
 Game Game::from_json(const json& j) {
-    Game g(
-        /*id*/           0,
-        /*name*/         "",
-        /*genero*/       "",
-        /*description*/  "",
-        /*price*/        0.0f,
-        /*totalStock*/   0,
-        /*platform*/     "",
-        /*players*/      ""
-    );
-
-    Product::from_json_base(g, j);       // ← bloque base
-    // Propios de Game (simétrico a tu to_json)
+    Game g(0, "", "", "", 0.0f, 0, "", "");
+    Product::from_json_base(g, j);
     g.platform = j.value("platform", "");
     g.players  = j.value("players", "");
-
     return g;
 }
