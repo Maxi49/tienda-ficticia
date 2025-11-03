@@ -114,6 +114,7 @@ public:
     GameInput readGameInput();
 
     ClientInput readClientInput();
+    bool updateProductPrice(int productId, float newPrice);
 
 
 };

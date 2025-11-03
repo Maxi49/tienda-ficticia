@@ -445,6 +445,52 @@ bool Store::upsert(const Product& p) {
     }
 }
 
+bool Store::updateProductPrice(int productId, float newPrice) {
+    Product* p = findProduct(productId);
+    if (!p) {
+        std::cerr << "[Store::updateProductPrice] Producto no encontrado.\n";
+        return false;
+    }
+    if (newPrice < 0.0f || !std::isfinite(newPrice)) {
+        std::cerr << "[Store::updateProductPrice] Precio inválido.\n";
+        return false;
+    }
+
+    // 1. Tomamos el JSON actual del producto
+    nlohmann::json j = p->to_json();
+    j["price"] = newPrice;  // mutación
+
+    // 2. Persistimos usando la lógica que ya existe
+    const std::string t = p->type();
+    JSON_DB* db = nullptr;
+    if      (t == "game")  db = &gamesDb_;
+    else if (t == "movie") db = &moviesDb_;
+    else {
+        std::cerr << "[Store::updateProductPrice] Tipo desconocido.\n";
+        return false;
+    }
+
+    if (!upsertJson(std::move(j), *db)) {
+        std::cerr << "[Store::updateProductPrice] Falló upsertJson().\n";
+        return false;
+    }
+
+    // 3. Recargamos el producto en memoria desde la base actualizada
+    auto maybeJ = db->find_by_id(std::to_string(productId));
+    if (!maybeJ) return false;
+
+    if (t == "game") {
+        Game g = Game::from_json(*maybeJ);
+        catalog_[productId] = std::make_unique<Game>(g);
+    } else if (t == "movie") {
+        Movie m = Movie::from_json(*maybeJ);
+        catalog_[productId] = std::make_unique<Movie>(m);
+    }
+
+    return true;
+}
+
+
 MovieInput Store::readMovieInput() {
     return  {
         readValue<std::string>("name: "),
@@ -471,5 +517,4 @@ GameInput Store::readGameInput() {
 
 ClientInput Store::readClientInput() {
     return {readValue<std::string>("name: ") };
-
 }
