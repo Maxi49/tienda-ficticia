@@ -151,7 +151,7 @@ inline void run_menu_loop(const std::string& title,
                 break;
             }
         }
-        if (!dispatched) std::cout << " Opción inválida.\n";
+        if (!dispatched) std::cout << " Opcion inválida.\n";
     }
 }
 
@@ -237,23 +237,23 @@ void administrate_clients(Store& store) {
  * @param store Tienda a operar (lectura y altas).
  */
 void administrate_movies(Store& store) {
-    run_menu_loop("Administrar Películas", {
-        {1, "Mostrar películas", [&]{ store.listMovies(); }},
-        {2, "Añadir película",   [&]{
+    run_menu_loop("Administrar Peliculas", {
+        {1, "Mostrar peliculas", [&]{ store.listMovies(); }},
+        {2, "Añadir peliculas",   [&]{
             MovieInput m = store.readMovieInput();
             auto& [name, genre, description, director, price, stock, duration] = m;
             const int id = store.addMovie(name, genre, description, price, stock, director, duration);
             std::cout << (id >= 0
-                ? "Película agregada con ID " + std::to_string(id) + ".\n"
+                ? "Pelicula agregada con ID " + std::to_string(id) + ".\n"
                 : "Error al agregar.\n");
         }},
-        {3, "Buscar película (por nombre)", [&]{
+        {3, "Buscar pelicula (por nombre)", [&]{
             const auto name = readStr("Nombre a buscar: ");
             const std::vector<Product*> out = store.findProductsByName(name);
             showVectorInfo(out);
         }},
-        {4, "Filtrar película por género (exacto)", [&]{
-            const auto gen = readStr("Género (exacto): ");
+        {4, "Filtrar pelicula por genero (exacto)", [&]{
+            const auto gen = readStr("Genero (exacto): ");
             store.listMoviesByGenre(gen);
         }},
     });
@@ -328,7 +328,7 @@ int main() {
 
     run_menu_loop("MENU PRINCIPAL", {
         {1, "Administrar Productos",  [&]{ administrate_products(store, tx); }},
-        {2, "Administrar Películas",  [&]{ administrate_movies(store); }},
+        {2, "Administrar Peliculas",  [&]{ administrate_movies(store); }},
         {3, "Administrar Juegos",     [&]{ administrate_games(store); }},
         {4, "Administrar Clientes",   [&]{ administrate_clients(store); }},
     }, /*exitKey*/0, /*exitLabel*/"Salir (guardar)");
