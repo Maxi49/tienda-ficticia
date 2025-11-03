@@ -235,9 +235,8 @@ void Store::saveToDisk() {
     }
 }
 
-// ------------------------------------------------------------
+
 // Altas automáticas (IDs autogenerados)
-// ------------------------------------------------------------
 
 /*
     addGame(...)
@@ -333,9 +332,7 @@ std::vector<Product*> Store::findProductsByName(const std::string& name, bool pa
     return out;
 }
 
-// ------------------------------------------------------------
 // Listados y filtros (salida por consola)
-// ------------------------------------------------------------
 
 void Store::listProducts() const {
     if (catalog_.empty()) { std::cout << "No hay productos.\n"; return; }
@@ -389,60 +386,92 @@ void Store::listMoviesByGenre(const std::string& genero) const {
     if (!any) std::cout << "No hay peliculas del genero '" << genero << "'.\n";
 }
 
-// ------------------------------------------------------------
+
 // Historial
-// ------------------------------------------------------------
 
 /*
-    printClientTransactions(clientId)
-    Lee db/transactions.json y lista solo las transacciones del cliente indicado.
-    Tolerante a id guardado como string o número.
+    
+    Muestra por consola el historial de transacciones de un cliente.
+
+    Cada registro proviene del archivo db/transactions.json e indica
+    si el cliente alquiló o devolvió productos. También muestra
+    el tipo de producto (game o movie) y maneja errores de formato
+    sin cortar la ejecución.
 */
 void Store::printClientTransactions(int clientId) const {
-    JSON_DB txdb{Alias::Transactions};
-    const auto& arr = txdb.all();
+    JSON_DB txdb{Alias::Transactions};     // Abrimos la base de datos de transacciones
+    const auto& arr = txdb.all();          // Obtenemos todo el contenido del JSON
+
+    // Si el archivo está vacío o mal formado, no hay nada que mostrar
     if (!arr.is_array() || arr.empty()) {
         std::cout << "No hay transacciones registradas.\n";
         return;
     }
 
-    bool found = false;
+    bool found = false; // marca si el cliente tiene transacciones registradas
+
+    // Recorremos cada transacción guardada
     for (const auto& t : arr) {
         try {
-            int cid = -1;
-            const auto& jcid = t.at("client").at("id");
-            if (jcid.is_string())       cid = std::stoi(jcid.get<std::string>());
-            else if (jcid.is_number())  cid = jcid.get<int>();
-            else continue;
+            //Obtener el ID del cliente dentro de la transacción
 
+            int cid = -1; // valor por defecto
+            const auto& jcid = t.at("client").at("id"); // accede al campo client.id
+
+            // El ID puede venir como texto ("3") o número (3)
+            if (jcid.is_string())
+                cid = std::stoi(jcid.get<std::string>());
+            else if (jcid.is_number())
+                cid = jcid.get<int>();
+
+            // Si no coincide con el cliente buscado, seguimos al siguiente registro
             if (cid != clientId) continue;
-            found = true;
 
+            found = true; // este cliente tiene al menos una transacción
+
+            //Obtener tipo de acción (rent o return) y cantidad
             std::string action = t.value("action", "?");
+            std::string actionText;
+            if (action == "rent")        actionText = "Alquiló";
+            else if (action == "return") actionText = "Devolvió";
+            else                         actionText = "(acción desconocida)";
+
             int qty = t.value("qty", 0);
+
+
+            // Obtener información del producto (id, nombre, tipo)
 
             int pid = -1;
             const auto& jpid = t.at("product").at("id");
-            if (jpid.is_string())       pid = std::stoi(jpid.get<std::string>());
-            else if (jpid.is_number())  pid = jpid.get<int>();
 
+            // Convertimos el id del producto a entero (por si está en string)
+            if (jpid.is_string())
+                pid = std::stoi(jpid.get<std::string>());
+            else if (jpid.is_number())
+                pid = jpid.get<int>();
+
+            // Nombre y tipo del producto
             std::string pname = t.at("product").value("name", "(sin nombre)");
+            std::string ptype = t.at("product").value("type", "(sin tipo)");
 
-            std::cout << "- " << action
-                      << "  " << qty << " x [" << pid << "] "
-                      << pname << "\n";
+            // Mostrar la transacción formateada
+            std::cout << "- " << actionText << " " << qty
+                      << " x [" << pid << "] "
+                      << pname << " (" << ptype << ")\n";
+
         } catch (const std::exception& e) {
-            std::cerr << "[Store::printClientTransactions] Registro inválido: " << e.what() << "\n";
+            // Capturamos cualquier error de formato o acceso y seguimos con el resto
+            std::cerr << "[Store::printClientTransactions] Registro inválido: "
+                      << e.what() << "\n";
         }
     }
 
+    // Si no se encontró ninguna transacción, se avisa
     if (!found)
         std::cout << "El cliente no tiene transacciones registradas.\n";
 }
 
-// ------------------------------------------------------------
-// Interfaz requerida por TransactionService
-// ------------------------------------------------------------
+
 
 /*
     upsert(p)

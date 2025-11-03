@@ -52,7 +52,7 @@ bool TransactionService::rent(Product& product, Client& client, int qty) {
         return false;
     }
 
-    // Snapshots (no romper log si fallan)
+    // Snapshots (no romper nada si fallan)
     Client::upsert(client);    // db/clients.json
     store_.upsert(product);    // db/games.json / db/movies.json
     return true;
