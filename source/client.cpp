@@ -4,7 +4,6 @@
 //Constructor
 Client::Client(int id, const std::string& name)
     : clientID(id), name(name) {
-    // No hay lógica adicional: sólo guarda ID y nombre.
 }
 
 void Client::showInfo() const {
@@ -63,10 +62,7 @@ bool Client::removeRental(int productId, int qty) {
     return false;
 }
 
-
-// ============================
 // Serialización
-// ============================
 
 json Client::to_json() const {
     // Convierte las líneas de alquiler a un array JSON simple
@@ -117,10 +113,7 @@ Client Client::from_json(const json& j) {
     return c;
 }
 
-
-// ============================
 // Persistencia
-// ============================
 
 bool Client::upsert(const Client& c) {
     try {
