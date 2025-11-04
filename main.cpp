@@ -382,6 +382,6 @@ int main() {
     try { store.saveToDisk(); }
     catch (const std::exception& e) { std::cerr << "[save] Error: " << e.what() << "\n"; }
 
-    std::cout << "Adiós!\n";
+    std::cout << "Adios!\n";
     return 0;
 }
