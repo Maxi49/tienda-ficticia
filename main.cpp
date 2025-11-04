@@ -280,7 +280,7 @@ void administrate_products(Store& store, TransactionService& tx) {
         {1, "Listar todos los productos", [&]{ store.listProducts(); }},
         {2, "Buscar producto (seleccionar)", [&]{
             const Product* p = chooseProduct(store);
-            std::cout << p << '\n';
+            p->showInfo();
         }},
         {3, "Alquilar producto", [&]{
             Client*  c = chooseClient(store);
