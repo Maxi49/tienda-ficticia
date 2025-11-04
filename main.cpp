@@ -135,7 +135,7 @@ inline void run_menu_loop(const std::string& title,
 {
     for (;;) {
         print_menu(title, items, exitKey, exitLabel);
-        int op = readInt("Opcion: ");
+        int op = readValue<int>("Opcion: ");
 
         if (op == exitKey) break;
 
@@ -181,12 +181,16 @@ void administrate_games(Store& store) {
                 : " Error al agregar.\n");
         }},
         {3, "Buscar juego (por nombre)", [&]{
-            const auto name = readStr("Nombre a buscar: ");
-            const std::vector<Product*> out = store.findProductsByName(name);
-            showVectorInfo(out);
+            const auto name = readValue<std::string>("Nombre a buscar: ");
+            const std::vector<Product*> products = store.findProductsByName(name);
+
+            for (const auto& product : products) {
+                product->showInfo();
+            }
+
         }},
         {4, "Filtrar juego por género (exacto)", [&]{
-            const auto gen = readStr("Género (exacto): ");
+            const auto gen = readValue<std::string>("Género (exacto): ");
             store.listGamesByGenre(gen);
         }},
     });
@@ -199,7 +203,7 @@ void administrate_games(Store& store) {
  *  1. Listar clientes.
  *  2. Crear cliente (alta con nombre).
  *  3. Ver historial transaccional de un cliente (selección por ID o nombre).
- *
+ *  4. Eliminar cliente
  * @param store Tienda con acceso a clientes y transacciones.
  *
  * @note `printClientTransactions` filtra sobre la base de transacciones y muestra solo del cliente elegido.
@@ -216,11 +220,35 @@ void administrate_clients(Store& store) {
                 : " Error al crear cliente.\n");
         }},
         {3, "Ver historial de un cliente", [&]{
+            store.listClientsBrief();
+
+            const int cid = readValue<int>("ID del cliente: ");
+
+            if (const Client* c = store.findClient(cid)) {
+                std::cout << "\nHistorial de " << c->getName()
+                          << " (id=" << c->getId() << "):\n";
+            } else {
+                std::cout << "\nHistorial del cliente id=" << cid << ":\n";
+            }
+
+            store.printClientTransactions(cid);
+        }},
+        {4, "Eliminar cliente", [&]{
             Client* c = chooseClient(store);
             if (!c) { std::cout << "Cliente no encontrado.\n"; return; }
-            std::cout << "\nHistorial de " << c->getName()
-                      << " (id=" << c->getId() << "):\n";
-            store.printClientTransactions(c->getId());
+
+            std::cout << "¿Seguro que querés eliminar al cliente ["
+                      << c->getId() << "] " << c->getName() << "? (s/N): ";
+            const std::string conf = readValue<std::string>("");
+
+            if (conf.empty() || (conf[0] != 's' && conf[0] != 'S')) {
+                std::cout << " Operación cancelada.\n";
+                return;
+            }
+
+            const bool ok = store.deleteClient(c->getId());
+            std::cout << (ok ? " Cliente eliminado.\n"
+                             : " No se pudo eliminar (no existe en DB).\n");
         }},
     });
 }
@@ -239,7 +267,7 @@ void administrate_clients(Store& store) {
 void administrate_movies(Store& store) {
     run_menu_loop("Administrar Peliculas", {
         {1, "Mostrar peliculas", [&]{ store.listMovies(); }},
-        {2, "Añadir peliculas",   [&]{
+        {2, "Agregar peliculas",   [&]{
             MovieInput m = store.readMovieInput();
             auto& [name, genre, description, director, price, stock, duration] = m;
             const int id = store.addMovie(name, genre, description, price, stock, director, duration);
@@ -248,12 +276,14 @@ void administrate_movies(Store& store) {
                 : "Error al agregar.\n");
         }},
         {3, "Buscar pelicula (por nombre)", [&]{
-            const auto name = readStr("Nombre a buscar: ");
-            const std::vector<Product*> out = store.findProductsByName(name);
-            showVectorInfo(out);
+            const auto name = readValue<std::string>("Nombre a buscar: ");
+            const std::vector<Product*> movies = store.findProductsByName(name);
+            for (const auto& movie : movies) {
+                movie->showInfo();
+            }
         }},
         {4, "Filtrar pelicula por genero (exacto)", [&]{
-            const auto gen = readStr("Genero (exacto): ");
+            const auto gen = readValue<std::string>("Genero (exacto): ");
             store.listMoviesByGenre(gen);
         }},
     });
@@ -276,32 +306,48 @@ void administrate_movies(Store& store) {
  * @warning Las acciones 3/4 requieren que el stock y reglas de negocio estén validadas dentro de TransactionService.
  */
 void administrate_products(Store& store, TransactionService& tx) {
-    run_menu_loop("Administrar Productos", {
+     run_menu_loop("Administrar Productos", {
         {1, "Listar todos los productos", [&]{ store.listProducts(); }},
         {2, "Buscar producto (seleccionar)", [&]{
             const Product* p = chooseProduct(store);
+            if (!p) { std::cout << "Producto no elegido.\n"; return; }
             p->showInfo();
         }},
         {3, "Alquilar producto", [&]{
             Client*  c = chooseClient(store);
             Product* p = chooseProduct(store);
             if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; return; }
-            int qty = readValue<int>("Cantidad: ");
+            const int qty = readValue<int>("Cantidad: ");
             std::cout << (tx.rent(*p, *c, qty) ? "Alquiler OK.\n" : "Alquiler rechazado.\n");
         }},
         {4, "Devolver producto", [&]{
             Client*  c = chooseClient(store);
             Product* p = chooseProduct(store);
             if (!c || !p) { std::cout << "No se pudo resolver cliente/producto.\n"; return; }
-            int qty = readValue<int>("Cantidad: ");
+            const int qty = readValue<int>("Cantidad: ");
             std::cout << (tx.giveBack(*p, *c, qty) ? "Devolución OK.\n" : "Devolución rechazada.\n");
         }},
         {5, "Actualizar precio de un producto", [&]{
-            Product* p = chooseProduct(store);        // Alternativa: pedir ID directo
+            const Product* p = chooseProduct(store);
             if (!p) { std::cout << "Producto no elegido.\n"; return; }
-            float nuevo = readValue<float>("Nuevo precio: ");
-            bool ok = store.updateProductPrice(p->getId(), nuevo);
+            const float nuevo = readValue<float>("Nuevo precio: ");
+            const bool ok = store.updateProductPrice(p->getId(), nuevo);
             std::cout << (ok ? " Precio actualizado.\n" : " No se pudo actualizar el precio.\n");
+        }},
+        {6, "Eliminar producto", [&]{
+            const Product* p = chooseProduct(store);
+            if (!p) { std::cout << "Producto no elegido.\n"; return; }
+
+            // (Opcional) mini confirmación
+            std::cout << "Seguro que queres eliminar el producto ["
+                      << p->getId() << "] " << p->getName() << "? (s/N): ";
+            const std::string conf = readValue<std::string>("");
+            if (!conf.empty() && (conf[0]=='s' || conf[0]=='S')) {
+                const bool ok = store.deleteProduct(p->getId());
+                std::cout << (ok ? " Producto eliminado.\n" : " No se pudo eliminar.\n");
+            } else {
+                std::cout << " Operacion cancelada.\n";
+            }
         }},
     });
 }

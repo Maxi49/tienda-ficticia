@@ -3,7 +3,8 @@
 using nlohmann::json;
 
 // Constructor
-Movie::Movie(int id,
+Movie::Movie(
+    int id,
     const std::string& name,
     const std::string& genero,
     const std::string& description,
@@ -40,10 +41,11 @@ void Movie::showInfo() const {
         estado = "DISPONIBLE";
     }
     std::cout << "[MOVIE] "
-              << name
-              << " | Gonero: " << genero
+              << " | ID: " << id
+              << " | nombre: " << name
+              << " | Genero: " << genero
               << " | Director: " << director
-              << " | Duración: " << durationMin << " min"
+              << " | Duracion: " << durationMin << " min"
               << " | Precio: $" << price
               << " | Stock total: " << totalStock
               << " | Disponible: " << availableStock

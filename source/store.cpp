@@ -24,7 +24,7 @@ bool Store::upsertJson(json obj, JSON_DB& db) {
         if (jid.is_string())            id = jid.get<std::string>();
         else if (jid.is_number_integer()) id = std::to_string(jid.get<int>());
         else {
-            std::cerr << "[Store::upsertJson] 'id' con tipo inválido\n";
+            std::cerr << "[Store::upsertJson] 'id' con tipo invalido\n";
             return false;
         }
         return db.find_by_id(id) ? db.update_by_id(std::move(obj))
@@ -117,7 +117,7 @@ void Store::loadFromDb(
                 catalog_[p->getId()] = std::move(p);
             }
         } catch (const std::exception& e) {
-            std::cerr << "[Store::loadFromDb] Item inválido: " << e.what() << "\n";
+            std::cerr << "[Store::loadFromDb] Item invalido: " << e.what() << "\n";
             // continúa con el resto
         }
     }
@@ -208,7 +208,7 @@ void Store::loadFromDisk() {
                     Client c = Client::from_json(j);
                     clients_[c.getId()] = std::make_unique<Client>(c);
                 } catch (const std::exception& e) {
-                    std::cerr << "[Store::loadFromDisk] Cliente inválido: " << e.what() << "\n";
+                    std::cerr << "[Store::loadFromDisk] Cliente invalido: " << e.what() << "\n";
                 }
             }
         }
@@ -399,78 +399,91 @@ void Store::listMoviesByGenre(const std::string& genero) const {
     sin cortar la ejecución.
 */
 void Store::printClientTransactions(int clientId) const {
-    JSON_DB txdb{Alias::Transactions};     // Abrimos la base de datos de transacciones
-    const auto& arr = txdb.all();          // Obtenemos todo el contenido del JSON
+    JSON_DB txdb{Alias::Transactions};
+    const auto& arr = txdb.all();
 
-    // Si el archivo está vacío o mal formado, no hay nada que mostrar
     if (!arr.is_array() || arr.empty()) {
         std::cout << "No hay transacciones registradas.\n";
         return;
     }
 
-    bool found = false; // marca si el cliente tiene transacciones registradas
+    bool found = false;
 
-    // Recorremos cada transacción guardada
     for (const auto& t : arr) {
         try {
-            //Obtener el ID del cliente dentro de la transacción
+            // ---- Validar que exista "client" y "id" ----
+            if (!t.contains("client") || !t["client"].is_object()) {
+                std::cerr << "[Store::printClientTransactions] Registro invalido: falta objeto 'client'\n";
+                continue;
+            }
+            const auto& jc = t["client"];
+            if (!jc.contains("id")) {
+                std::cerr << "[Store::printClientTransactions] Registro invalido: falta 'client.id'\n";
+                continue;
+            }
 
-            int cid = -1; // valor por defecto
-            const auto& jcid = t.at("client").at("id"); // accede al campo client.id
-
-            // El ID puede venir como texto ("3") o número (3)
-            if (jcid.is_string())
-                cid = std::stoi(jcid.get<std::string>());
-            else if (jcid.is_number())
+            // ---- Parsear client.id (string o number) ----
+            int cid = -1;
+            const auto& jcid = jc["id"];
+            if (jcid.is_string()) {
+                try { cid = std::stoi(jcid.get<std::string>()); }
+                catch (...) { cid = -1; }
+            } else if (jcid.is_number_integer()) {
                 cid = jcid.get<int>();
+            } else if (jcid.is_number()) {
+                cid = static_cast<int>(jcid.get<double>());
+            }
 
-            // Si no coincide con el cliente buscado, seguimos al siguiente registro
-            if (cid != clientId) continue;
+            if (cid != clientId) continue; // no es el cliente buscado
 
-            found = true; // este cliente tiene al menos una transacción
+            found = true;
 
-            //Obtener tipo de acción (rent o return) y cantidad
-            std::string action = t.value("action", "?");
-            std::string actionText;
-            if (action == "rent")        actionText = "Alquiló";
-            else if (action == "return") actionText = "Devolvió";
-            else                         actionText = "(acción desconocida)";
+            // ---- action ----
+            const std::string action = t.value("action", "?");
+            std::string actionText =
+                (action == "rent")   ? "Alquilo" :
+                (action == "return") ? "Devolvio" : "(acción desconocida)";
 
-            int qty = t.value("qty", 0);
+            // ---- qty ----
+            int qty = 0;
+            try { qty = t.value("qty", 0); } catch (...) {}
 
-
-            // Obtener información del producto (id, nombre, tipo)
-
+            // ---- product ----
             int pid = -1;
-            const auto& jpid = t.at("product").at("id");
+            std::string pname = "(sin nombre)";
+            std::string ptype = "(sin tipo)";
 
-            // Convertimos el id del producto a entero (por si está en string)
-            if (jpid.is_string())
-                pid = std::stoi(jpid.get<std::string>());
-            else if (jpid.is_number())
-                pid = jpid.get<int>();
+            if (t.contains("product") && t["product"].is_object()) {
+                const auto& jp = t["product"];
+                if (jp.contains("id")) {
+                    const auto& jpid = jp["id"];
+                    if (jpid.is_string()) {
+                        try { pid = std::stoi(jpid.get<std::string>()); } catch (...) { pid = -1; }
+                    } else if (jpid.is_number_integer()) {
+                        pid = jpid.get<int>();
+                    } else if (jpid.is_number()) {
+                        pid = static_cast<int>(jpid.get<double>());
+                    }
+                }
+                pname = jp.value("name", pname);
+                ptype = jp.value("type", ptype);
+            } else {
+                std::cerr << "[Store::printClientTransactions] Registro invalido: falta objeto 'product'\n";
+            }
 
-            // Nombre y tipo del producto
-            std::string pname = t.at("product").value("name", "(sin nombre)");
-            std::string ptype = t.at("product").value("type", "(sin tipo)");
-
-            // Mostrar la transacción formateada
             std::cout << "- " << actionText << " " << qty
                       << " x [" << pid << "] "
                       << pname << " (" << ptype << ")\n";
 
         } catch (const std::exception& e) {
-            // Capturamos cualquier error de formato o acceso y seguimos con el resto
-            std::cerr << "[Store::printClientTransactions] Registro inválido: "
-                      << e.what() << "\n";
+            std::cerr << "[Store::printClientTransactions] Registro invalido: " << e.what() << "\n";
         }
     }
 
-    // Si no se encontró ninguna transacción, se avisa
-    if (!found)
+    if (!found) {
         std::cout << "El cliente no tiene transacciones registradas.\n";
+    }
 }
-
 
 
 /*
@@ -560,3 +573,112 @@ GameInput Store::readGameInput() {
 ClientInput Store::readClientInput() {
     return {readValue<std::string>("name: ") };
 }
+
+bool Store::deleteProduct(int productId) {
+    try {
+        const std::string sid = std::to_string(productId);
+
+        if (Product* p = findProduct(productId)) {
+            const std::string t = p->type();
+            JSON_DB* db = nullptr;
+            if      (t == "game")  db = &gamesDb_;
+            else if (t == "movie") db = &moviesDb_;
+            else {
+                std::cerr << "[Store::deleteProduct] Tipo desconocido para id=" << productId << ".\n";
+                return false;
+            }
+
+            if (!db->delete_by_id(sid)) {
+                std::cerr << "[Store::deleteProduct] No se pudo borrar id=" << productId
+                          << " de la DB (" << t << ").\n";
+                return false;
+            }
+
+            // Borramos del catálogo en memoria.
+            catalog_.erase(productId);
+            return true;
+        }
+
+        bool ok = false;
+        if (gamesDb_.delete_by_id(sid))  ok = true;
+        if (moviesDb_.delete_by_id(sid)) ok = true;
+
+        if (!ok) {
+            std::cerr << "[Store::deleteProduct] No existe el id " << productId
+                      << " en games.json ni movies.json.\n";
+            return false;
+        }
+
+        catalog_.erase(productId);
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "[Store::deleteProduct] Error: " << e.what() << "\n";
+        return false;
+    }
+}
+
+bool Store::hasTxForClient_(int clientId) {
+    try {
+        JSON_DB txdb{Alias::Transactions};
+        const auto& arr = txdb.all();
+        if (!arr.is_array()) return false;
+
+        for (const auto& t : arr) {
+            try {
+                const auto& jcid = t.at("client").at("id");
+                int cid = -1;
+                if (jcid.is_string())      cid = std::stoi(jcid.get<std::string>());
+                else if (jcid.is_number()) cid = jcid.get<int>();
+                if (cid == clientId) return true;
+            } catch (...) {
+                // registro mal formado -> lo ignoramos
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[Store::hasTxForClient_] Error: " << e.what() << "\n";
+    }
+    return false;
+}
+
+// --- borrar cliente: DB -> memoria (con política de seguridad) ---
+bool Store::deleteClient(int clientId, bool force) {
+    try {
+        // 0) política de integridad: no borrar si tiene historial (salvo force)
+        if (!force && hasTxForClient_(clientId)) {
+            std::cerr << "[Store::deleteClient] El cliente id=" << clientId
+                      << " tiene transacciones. Use force=true si desea borrarlo igualmente.\n";
+            return false;
+        }
+
+        const std::string sid = std::to_string(clientId);
+
+        // 1) borrar en disco
+        if (!clientsDb_.delete_by_id(sid)) {
+            std::cerr << "[Store::deleteClient] No existe id=" << clientId << " en clients.json.\n";
+            return false;
+        }
+
+        // 2) borrar en memoria (si estaba)
+        clients_.erase(clientId);
+
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "[Store::deleteClient] Error: " << e.what() << "\n";
+        return false;
+    }
+}
+
+void Store::listClientsBrief() const {
+    if (clients_.empty()) {
+        std::cout << "No hay clientes.\n";
+        return;
+    }
+    std::cout << "Clientes disponibles:\n";
+    for (const auto& [id, c] : clients_) {
+        if (!c) continue;
+        std::cout << "  [" << id << "] " << c->getName() << "\n";
+    }
+}
+
+
+

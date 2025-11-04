@@ -66,6 +66,7 @@ class Store {
     static std::string toLower(std::string s);               // convierte texto a minúsculas (para búsquedas)
 
 public:
+    bool deleteClient(int clientId, bool force=false);
     //GUARDADO
     bool upsert(const Product& p);
     /*
@@ -116,5 +117,10 @@ public:
     ClientInput readClientInput();
     bool updateProductPrice(int productId, float newPrice);
 
+    bool deleteProduct(int productId);
 
+    void listClientsBrief() const;
+
+private:
+    static bool hasTxForClient_(int clientId);
 };

@@ -8,7 +8,8 @@ Product::Product(
     const std::string& genero,
     const std::string& description,
     float price,
-    int totalStock)
+    int totalStock
+    )
     : id(id),
       name(name),
       genero(genero),
@@ -19,8 +20,29 @@ Product::Product(
       rented(false),
       activeRentals{} {}
 
+void Product::showInfo() const {
+    std::string estado;
+    if (availableStock == 0) {
+        estado = "SIN STOCK";
+    } else if (availableStock < totalStock) {
+        estado = "DISPONIBLE (con alquileres)";
+    } else {
+        estado = "DISPONIBLE";
+    }
+    std::cout << " | Tipo " << type()
+              << " | ID " << id
+              << " | nombre " << name
+              << " | Genero: " << genero
+              << " | Precio: $" << price
+              << " | Stock total: " << totalStock
+              << " | Disponible: " << availableStock
+              << " | Estado: " << estado
+              << std::endl;
+}
+
+
 // Métodos de stock (tus implementaciones)
-bool Product::canRent(int amountReq) const {
+bool Product::canRent(const int amountReq) const {
     return amountReq > 0 && availableStock >= amountReq;
 }
 
@@ -51,7 +73,7 @@ json Product::base_json_() const {
     for (const auto& [cid, q] : activeRentals) rentals[cid] = q;
 
     return json{
-        {"id",             std::to_string(id)}, // tu JSON_DB exige string
+        {"id",             std::to_string(id)}, // JSON_DB exige string
         {"name",           name},
         {"genero",         genero},
         {"description",    description},
@@ -75,7 +97,6 @@ static int parse_id_(const nlohmann::json& j) {
                            : idv.get<int>();
 }
 
-// ⬇⬇⬇ Inversa de base_json_(): rellena el “bloque base” del producto
 void Product::from_json_base(Product& p, const nlohmann::json& j) {
     // Campos “fijos” del producto
     p.id          = parse_id_(j);

@@ -43,8 +43,9 @@ void Game::showInfo() const {
         estado = "DISPONIBLE";
     }
 
-    std::cout << "[GAME] "
-              << name
+    std::cout << " [GAME] "
+              << " |ID: " << id
+              << " | nombre: " << name
               << " | Genero: " << genero
               << " | Plataforma: " << platform
               << " | Jugadores: " << players
