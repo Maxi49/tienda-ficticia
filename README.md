@@ -112,7 +112,6 @@ Clase principal que gestiona:
 ## Compilación y Ejecución
 
 Desde la raíz del proyecto, ejecutar el siguiente comando:
-````
 ```
 g++ -std=c++17 -I"./headers" -I"./db_utils" main.cpp source/products/game.cpp source/products/movie.cpp source/products/product.cpp source/client.cpp source/store.cpp source/transaction.cpp db_utils/json_db_utils.cpp -o tienda.exe
 
